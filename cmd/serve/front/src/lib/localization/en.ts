@@ -155,6 +155,80 @@ const translations = {
 	'templates.keycloak.password': 'Admin password',
 	'templates.keycloak.hostname': 'Public address (token issuer)',
 	'templates.connect.title': 'Connect from your apps',
+	'templates.category.backend': 'Backends and APIs',
+	'templates.credential.api_key': 'API key',
+	'templates.credential.token_key': 'Token signing key',
+	'templates.credential.websocket': 'WebSocket address',
+	'templates.openobserve.description':
+		'Logs, metrics and traces from your apps over OpenTelemetry, with search and dashboards.',
+	'templates.openobserve.after':
+		'Point your app’s OpenTelemetry exporter (OTLP over HTTP) at the address above, signed in with your email and the password. Open the app to search and chart what it sent.',
+	'templates.openobserve.email': 'Your email',
+	'templates.openobserve.email.help':
+		'You sign in to OpenObserve with it, and your apps send data with it.',
+	'templates.openobserve.password': 'Password',
+	'templates.directus.description':
+		'A backend for your frontend: data models, REST and GraphQL APIs, files and users, with an admin app.',
+	'templates.directus.after':
+		'Open the app and sign in with your email and the password. Model your data, then call its REST or GraphQL API from your frontend.',
+	'templates.directus.public_url': 'Public address',
+	'templates.directus.email': 'Your email',
+	'templates.directus.email.help': 'You sign in to Directus with it.',
+	'templates.directus.password': 'Admin password',
+	'templates.directus.secret': 'Token secret',
+	'templates.centrifugo.description':
+		'Real-time messaging over WebSockets for your frontends: channels, presence and history, published from your backend.',
+	'templates.centrifugo.after':
+		'Your backend publishes through the API above with the API key, and signs connection tokens with the token key. Your frontend connects to the WebSocket address. The admin page signs in with the password.',
+	'templates.centrifugo.origins': 'Allowed origins',
+	'templates.centrifugo.origins.help':
+		'Where your frontend runs, such as https://app.example.com; several separated by spaces.',
+	'templates.centrifugo.admin_password': 'Admin password',
+	'templates.centrifugo.admin_secret': 'Admin session secret',
+	'templates.centrifugo.hmac': 'Token signing key',
+	'templates.centrifugo.api_key': 'API key',
+	'templates.mosquitto.description':
+		'An MQTT broker for devices and real-time apps, over TCP and over WebSockets for browsers.',
+	'templates.mosquitto.after':
+		'Connect with the MQTT address above as app with the password. Browsers use the WebSocket address. Anonymous clients are refused.',
+	'templates.mosquitto.password': 'Password',
+	'templates.phpmyadmin.description': 'A web interface for your MariaDB and MySQL databases.',
+	'templates.phpmyadmin.after':
+		'Open it and sign in with a database’s own user: the server is its address, such as mariadb.db, with the user and password from that database’s Sign-in and connection.',
+	'detail.tab.compose': 'Compose file',
+	'compose.title': 'Compose file',
+	'compose.description':
+		'What this environment runs. Edit it and deploy it again: checkship queues a new deployment of the file.',
+	'compose.from_deployment': (number: number, env: string) =>
+		`${env} runs this file, from deployment #${number}.`,
+	'compose.from_git': (env: string, branch: string) =>
+		`${env} deploys from Git (${branch}): its compose file is in the repository. Edit it there and deploy again, or write one below to deploy it as a compose file instead.`,
+	'compose.from_archive': (env: string) =>
+		`${env} deploys from an archive: its compose file is inside it. Upload a new archive, or write one below to deploy it as a compose file instead.`,
+	'compose.from_other': (env: string, other: string) =>
+		`${env} isn’t deployed yet: this starts from ${other}’s compose file.`,
+	'compose.none': (env: string) =>
+		`${env} isn’t deployed yet. Write its compose file below to deploy it.`,
+	'compose.template': (name: string) =>
+		`It runs the ${name} template. Its settings are the app’s variables (Settings), which override the environment written here.`,
+	'compose.changed': 'Changed',
+	'compose.reset': 'Reset',
+	'compose.copy': 'Copy',
+	'compose.download': 'Download',
+	'compose.services': (list: string) => `Services: ${list}`,
+	'compose.help': 'A compose file with a top-level services: key.',
+	'compose.deploy': (env: string) => `Save and deploy to ${env}`,
+	'compose.deploy_hint':
+		'Deploying replaces what runs now; the previous deployment stays in Deployments, to redeploy.',
+	'compose.problem.empty': 'Write a compose file first.',
+	'compose.problem.tabs': 'Indent with spaces: YAML doesn’t allow tabs.',
+	'compose.problem.no_services': 'Add a top-level services: key with at least one service.',
+	'templates.compose.title': 'Compose file',
+	'templates.compose.description':
+		'What Deploy sends. Edit it to change the image, ports or volumes; the settings above stay variables.',
+	'templates.compose.edited': 'Edited',
+	'templates.compose.reset': 'Use the template’s file',
+	'templates.reason.compose': 'Fix the compose file to deploy',
 	'templates.credential.username': 'User name',
 	'templates.credential.password': 'Password',
 	'templates.credential.email': 'Email',

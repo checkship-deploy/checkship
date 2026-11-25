@@ -693,6 +693,266 @@ volumes:
 		logoCredit: 'Keycloak, CNCF (Linux Foundation trademark guidelines)',
 		website: 'https://www.keycloak.org',
 		docs: 'https://www.keycloak.org/documentation'
+	},
+	{
+		id: 'openobserve',
+		name: 'OpenObserve',
+		category: 'monitoring',
+		description: 'templates.openobserve.description',
+		after: 'templates.openobserve.after',
+		image: 'openobserve/openobserve:v1.1.2',
+		service: 'openobserve',
+		compose: `services:
+  openobserve:
+    image: openobserve/openobserve:v1.1.2
+    restart: unless-stopped
+    environment:
+      ZO_DATA_DIR: /data
+      ZO_TELEMETRY: "false"
+    ports:
+      - "5080:5080"
+    volumes:
+      - data:/data
+
+volumes:
+  data:
+`,
+		fields: [
+			{
+				key: 'ZO_ROOT_USER_EMAIL',
+				kind: 'required',
+				email: true,
+				label: 'templates.openobserve.email',
+				help: 'templates.openobserve.email.help'
+			},
+			{
+				key: 'ZO_ROOT_USER_PASSWORD',
+				kind: 'generated',
+				// OpenObserve refuses a password without lower and upper case, a digit and a symbol.
+				strong: true,
+				length: 24,
+				label: 'templates.openobserve.password'
+			}
+		],
+		connect: { port: 5080, url: 'http://{host}:5080/api/default' },
+		credentials: [
+			{ label: 'templates.credential.email', value: '{ZO_ROOT_USER_EMAIL}' },
+			{ label: 'templates.credential.password', value: '{ZO_ROOT_USER_PASSWORD}', secret: true }
+		],
+		firstStartOnly: true,
+		logo: '/template-logos/openobserve.svg',
+		logoCredit: 'OpenObserve (AGPL-3.0 repository)',
+		website: 'https://openobserve.ai',
+		docs: 'https://openobserve.ai/docs/'
+	},
+	{
+		id: 'directus',
+		name: 'Directus',
+		category: 'backend',
+		description: 'templates.directus.description',
+		after: 'templates.directus.after',
+		image: 'directus/directus:12.7.0',
+		service: 'directus',
+		// SQLite in a volume: enough to build against. Uploads keep their own volume.
+		compose: `services:
+  directus:
+    image: directus/directus:12.7.0
+    restart: unless-stopped
+    environment:
+      DB_CLIENT: sqlite3
+      DB_FILENAME: /directus/database/data.db
+    ports:
+      - "8055:8055"
+    volumes:
+      - database:/directus/database
+      - uploads:/directus/uploads
+
+volumes:
+  database:
+  uploads:
+`,
+		fields: [
+			{ key: 'PUBLIC_URL', kind: 'derived', derive: 'url', label: 'templates.directus.public_url' },
+			{
+				key: 'ADMIN_EMAIL',
+				kind: 'required',
+				email: true,
+				label: 'templates.directus.email',
+				help: 'templates.directus.email.help'
+			},
+			{
+				key: 'ADMIN_PASSWORD',
+				kind: 'generated',
+				length: 24,
+				label: 'templates.directus.password'
+			},
+			{ key: 'SECRET', kind: 'generated', length: 64, label: 'templates.directus.secret' }
+		],
+		connect: { port: 8055, url: 'http://{host}:8055' },
+		credentials: [
+			{ label: 'templates.credential.email', value: '{ADMIN_EMAIL}' },
+			{ label: 'templates.credential.password', value: '{ADMIN_PASSWORD}', secret: true }
+		],
+		firstStartOnly: true,
+		logo: '/template-logos/directus.svg',
+		logoDark: '/template-logos/directus-white.svg',
+		logoCredit: 'Directus (Monospace Sustainable Core License repository)',
+		website: 'https://directus.io',
+		docs: 'https://directus.io/docs'
+	},
+	{
+		id: 'centrifugo',
+		name: 'Centrifugo',
+		category: 'messaging',
+		description: 'templates.centrifugo.description',
+		after: 'templates.centrifugo.after',
+		image: 'centrifugo/centrifugo:v6.10.3',
+		service: 'centrifugo',
+		// The memory engine: channels and presence live in the process, so nothing to keep.
+		compose: `services:
+  centrifugo:
+    image: centrifugo/centrifugo:v6.10.3
+    restart: unless-stopped
+    command: ["centrifugo"]
+    environment:
+      CENTRIFUGO_ADMIN_ENABLED: "true"
+    ports:
+      - "8000:8000"
+`,
+		fields: [
+			{
+				key: 'CENTRIFUGO_CLIENT_ALLOWED_ORIGINS',
+				kind: 'required',
+				label: 'templates.centrifugo.origins',
+				help: 'templates.centrifugo.origins.help'
+			},
+			{
+				key: 'CENTRIFUGO_ADMIN_PASSWORD',
+				kind: 'generated',
+				length: 24,
+				label: 'templates.centrifugo.admin_password'
+			},
+			{
+				key: 'CENTRIFUGO_ADMIN_SECRET',
+				kind: 'generated',
+				length: 48,
+				label: 'templates.centrifugo.admin_secret'
+			},
+			{
+				key: 'CENTRIFUGO_CLIENT_TOKEN_HMAC_SECRET_KEY',
+				kind: 'generated',
+				length: 64,
+				label: 'templates.centrifugo.hmac'
+			},
+			{
+				key: 'CENTRIFUGO_HTTP_API_KEY',
+				kind: 'generated',
+				length: 32,
+				label: 'templates.centrifugo.api_key'
+			}
+		],
+		connect: { port: 8000, url: 'http://{host}:8000/api' },
+		credentials: [
+			{
+				label: 'templates.credential.password',
+				value: '{CENTRIFUGO_ADMIN_PASSWORD}',
+				secret: true
+			},
+			{ label: 'templates.credential.api_key', value: '{CENTRIFUGO_HTTP_API_KEY}', secret: true },
+			{
+				label: 'templates.credential.token_key',
+				value: '{CENTRIFUGO_CLIENT_TOKEN_HMAC_SECRET_KEY}',
+				secret: true
+			},
+			{ label: 'templates.credential.websocket', value: '{ws}/connection/websocket' }
+		],
+		stateless: true,
+		logo: '/template-logos/centrifugo.svg',
+		logoPlate: true,
+		logoCredit: 'Centrifugo (Apache-2.0 website repository)',
+		website: 'https://centrifugal.dev',
+		docs: 'https://centrifugal.dev/docs/getting-started/introduction'
+	},
+	{
+		id: 'mosquitto',
+		name: 'Mosquitto',
+		category: 'messaging',
+		description: 'templates.mosquitto.description',
+		after: 'templates.mosquitto.after',
+		image: 'eclipse-mosquitto:2.0.23',
+		service: 'mosquitto',
+		// The image reads no environment: each start writes its configuration and a password file
+		// from MQTT_PASSWORD ($$ keeps compose from reading it), then hands over to mosquitto,
+		// which drops to its own user. The first web port is MQTT over WebSockets, for browsers.
+		compose: `services:
+  mosquitto:
+    image: eclipse-mosquitto:2.0.23
+    restart: unless-stopped
+    command:
+      - sh
+      - -c
+      - |
+        cat > /mosquitto/config/mosquitto.conf <<CONF
+        listener 1883
+        allow_anonymous false
+        password_file /mosquitto/config/passwd
+        persistence true
+        persistence_location /mosquitto/data/
+        listener 9001
+        protocol websockets
+        CONF
+        mosquitto_passwd -b -c /mosquitto/config/passwd app "$$MQTT_PASSWORD"
+        chmod 0700 /mosquitto/config/passwd
+        chown mosquitto:mosquitto /mosquitto/config/passwd
+        exec mosquitto -c /mosquitto/config/mosquitto.conf
+    ports:
+      - "9001:9001"
+      - "1883:1883/tcp"
+    volumes:
+      - data:/mosquitto/data
+
+volumes:
+  data:
+`,
+		fields: [
+			{ key: 'MQTT_PASSWORD', kind: 'generated', length: 32, label: 'templates.mosquitto.password' }
+		],
+		connect: { port: 1883, url: 'mqtt://app:{MQTT_PASSWORD}@{host}:1883' },
+		credentials: [
+			{ label: 'templates.credential.username', value: 'app' },
+			{ label: 'templates.credential.password', value: '{MQTT_PASSWORD}', secret: true },
+			{ label: 'templates.credential.websocket', value: '{ws}' }
+		],
+		noWebPage: true,
+		logo: '/template-logos/mosquitto.svg',
+		logoCredit: 'Eclipse Mosquitto (EPL-2.0 / EDL-1.0 repository)',
+		website: 'https://mosquitto.org',
+		docs: 'https://mosquitto.org/documentation/'
+	},
+	{
+		id: 'phpmyadmin',
+		name: 'phpMyAdmin',
+		category: 'database',
+		description: 'templates.phpmyadmin.description',
+		after: 'templates.phpmyadmin.after',
+		image: 'phpmyadmin:5.2.3',
+		service: 'phpmyadmin',
+		// You sign in with a database's own user: its login page asks for the server too.
+		compose: `services:
+  phpmyadmin:
+    image: phpmyadmin:5.2.3
+    restart: unless-stopped
+    environment:
+      PMA_ARBITRARY: "1"
+    ports:
+      - "80:80"
+`,
+		fields: [],
+		stateless: true,
+		logo: '/template-logos/phpmyadmin.svg',
+		logoCredit: 'phpMyAdmin project (brand files in phpmyadmin/data)',
+		website: 'https://www.phpmyadmin.net',
+		docs: 'https://docs.phpmyadmin.net'
 	}
 ];
 
@@ -707,7 +967,8 @@ export const categories: TemplateCategory[] = [
 	'search',
 	'storage',
 	'messaging',
-	'auth'
+	'auth',
+	'backend'
 ];
 
 export function templateById(id: string): Template | undefined {

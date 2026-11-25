@@ -17,6 +17,7 @@ const routes = {
 			? `/apps/${id}/logs?environment=${environment}`
 			: `/apps/${id}/logs`,
 	appBackups: (id: string) => `/apps/${id}/backups`,
+	appCompose: (id: string) => `/apps/${id}/compose`,
 	createDeployment: (id: string) => `/apps/${id}/deployments/new`,
 	deployment: (id: string, number: number) => `/apps/${id}/deployments/${number}`,
 	targets: '/targets',

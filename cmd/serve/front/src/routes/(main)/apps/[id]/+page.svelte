@@ -57,6 +57,7 @@
 	import AppWorkspace, { type AppActions } from './app-workspace.svelte';
 	import DeployStrip from '#lib/components/deploy-strip.svelte';
 	import IconButton from '#lib/components/icon-button.svelte';
+	import { templateOfApp } from '#lib/templates/recognise.ts';
 	import { liveUrls, socketAddresses } from './app-state.ts';
 	import EmptyState from '#lib/components/empty-state.svelte';
 
@@ -135,6 +136,9 @@
 			(s.production ?? s.staging)?.image
 		].filter((part): part is string => !!part);
 	}
+
+	/** A template whose web port carries no page (Mosquitto): its cards show its addresses. */
+	const pageless = $derived(!!templateOfApp(app)?.noWebPage);
 
 	async function copy(text: string) {
 		if (await copyText(text)) toast.success(l.translate('copied'));
@@ -257,7 +261,7 @@
 							{@const environment = slot as Environment}
 							{@const latest = app.latest_deployments[environment]}
 							{@const target = app[environment].target}
-							{@const urls = liveUrls(latest)}
+							{@const urls = pageless ? [] : liveUrls(latest)}
 							{@const url = urls[0]}
 							{@const state = latest ? cardState(latest) : undefined}
 							<section

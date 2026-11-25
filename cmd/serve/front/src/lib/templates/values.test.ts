@@ -18,6 +18,7 @@ import {
 	newSecret,
 	resolveVars,
 	secretOf,
+	strongSecret,
 	valuesOf,
 	type TemplateValues
 } from './values.ts';
@@ -277,5 +278,26 @@ describe('sign-in details', () => {
 
 	test('are empty for a service with no variables yet', () => {
 		expect(valuesOf(get('nats'), undefined)).toEqual({});
+	});
+});
+
+describe('strongSecret', () => {
+	test('mixes every class OpenObserve asks for, in URL-safe characters', () => {
+		for (let i = 0; i < 50; i++) {
+			const secret = strongSecret(24);
+			expect(secret).toHaveLength(24);
+			expect(secret).toMatch(/[a-z]/);
+			expect(secret).toMatch(/[A-Z]/);
+			expect(secret).toMatch(/[0-9]/);
+			expect(secret).toMatch(/[-_.~]/);
+			expect(secret).toMatch(/^[A-Za-z0-9\-_.~]+$/);
+		}
+	});
+
+	test('is what OpenObserve’s password field generates', () => {
+		const password = initialValues(get('openobserve')).ZO_ROOT_USER_PASSWORD;
+		expect(password).toMatch(/[a-z]/);
+		expect(password).toMatch(/[A-Z]/);
+		expect(password).toMatch(/[-_.~]/);
 	});
 });

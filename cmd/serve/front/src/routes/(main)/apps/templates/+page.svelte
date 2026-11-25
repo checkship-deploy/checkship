@@ -7,6 +7,7 @@
 -->
 <script lang="ts">
 	import Activity01Icon from '@hugeicons/core-free-icons/Activity01Icon';
+	import ApiIcon from '@hugeicons/core-free-icons/ApiIcon';
 	import ArrowRight01Icon from '@hugeicons/core-free-icons/ArrowRight01Icon';
 	import CloudServerIcon from '@hugeicons/core-free-icons/CloudServerIcon';
 	import CodeSquareIcon from '@hugeicons/core-free-icons/CodeSquareIcon';
@@ -53,7 +54,8 @@
 		search: FileSearchIcon,
 		storage: CloudServerIcon,
 		messaging: MessageMultiple01Icon,
-		auth: UserLock01Icon
+		auth: UserLock01Icon,
+		backend: ApiIcon
 	};
 
 	const categoryLabel = (c: TemplateCategory) => l.translate(`templates.category.${c}`);
