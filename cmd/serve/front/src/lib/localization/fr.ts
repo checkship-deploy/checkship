@@ -18,6 +18,198 @@ export default {
 		'app.not_found.cta': "page d'accueil",
 		'app.blankslate': `Aucune application pour le moment. <br />Les applications représentent les <strong>services que vous souhaitez déployer</strong> sur votre infrastructure. Commencez par <a href="${routes.createApp}">en créer une !</a>`,
 		'app.new': 'Nouvelle application',
+		'app.new.menu': 'Créer une application',
+		'app.new.scratch': 'De zéro',
+		'app.new.scratch.hint': 'Nom, source, cibles et variables',
+		'app.new.template': 'À partir d’un modèle',
+		'app.new.template.hint': 'Applications prêtes à l’emploi, déployées en une étape',
+		// Modèles (Nouvelle application › À partir d’un modèle)
+		'templates.title': 'Modèles',
+		'templates.summary': (count: number) =>
+			`${count} modèles · applications prêtes à l’emploi : choisissez-en une, vérifiez ses réglages, puis déployez-la`,
+		'templates.search': 'Rechercher un modèle',
+		'templates.category': 'Catégorie',
+		'templates.category.all': 'Toutes',
+		'templates.category.monitoring': 'Supervision',
+		'templates.category.notes': 'Notes',
+		'templates.category.developer': 'Outils de développement',
+		'templates.category.security': 'Sécurité',
+		'templates.category.notifications': 'Notifications',
+		'templates.category.database': 'Bases de données et caches',
+		'templates.category.email': 'E-mail',
+		'templates.category.search': 'Recherche',
+		'templates.category.storage': 'Stockage de fichiers',
+		'templates.ready': 'Prêt à déployer',
+		'templates.needs_setup': 'À configurer',
+		'templates.no_match.title': 'Aucun modèle ne correspond',
+		'templates.no_match.description':
+			'Essayez un autre nom ou une autre catégorie, ou créez l’application de zéro.',
+		'templates.logos_notice':
+			'Les logos sont des marques de leurs projets et servent seulement à identifier chaque application.',
+		'templates.deploy_title': (name: string) => `Déployer ${name}`,
+		'templates.target': 'Cible',
+		'templates.live_at': 'Elle sera accessible à',
+		'templates.no_url':
+			'Cette cible n’a pas d’URL (proxy manuel) : saisissez l’adresse de l’application dans les réglages ci-dessous.',
+		'templates.https_needed': (name: string) =>
+			`Cette cible utilise http://. ${name} a besoin de HTTPS (ou d’une adresse *.localhost) dans le navigateur, la connexion échouera donc ici. Choisissez une cible HTTPS, ou déployez quand même.`,
+		'templates.required.title': 'Réglages à renseigner',
+		'templates.required.description': (name: string) => `${name} les lit à son premier démarrage.`,
+		'templates.auto.title': 'Remplis pour vous',
+		'templates.auto.description':
+			'Enregistrés comme variables de l’application : vous pourrez les modifier ensuite.',
+		'templates.auto.from_url': 'D’après l’URL de l’application',
+		'templates.auto.generated': 'Généré',
+		'templates.generate': 'Générer',
+		'templates.copy': (label: string) => `Copier : ${label.toLowerCase()}`,
+		'templates.regenerate': (label: string) => `Générer à nouveau : ${label.toLowerCase()}`,
+		'templates.after': 'Après le déploiement',
+		'templates.logo_credit': (credit: string) => `Logo : ${credit}`,
+		'templates.website': 'Site web',
+		'templates.docs': 'Documentation',
+		'templates.reason.name': 'Corrigez le nom pour déployer',
+		'templates.reason.fill': (count: number) =>
+			count === 1 ? 'Renseignez le réglage requis' : `Renseignez les ${count} réglages requis`,
+		'templates.reason.fix': 'Corrigez les réglages signalés pour déployer',
+		'templates.deploy': 'Déployer',
+		'templates.deploying_label': 'Déploiement…',
+		'templates.queue_failed': (name: string) =>
+			`${name} a été créée, mais son premier déploiement n’a pas pu être mis en file. Déployez-la depuis cette page.`,
+		'templates.field.required': 'Requis.',
+		'templates.field.too_short': 'Utilisez au moins 8 caractères.',
+		'templates.uptime_kuma.description':
+			'Surveille vos sites, API et services et vous alerte quand ils tombent.',
+		'templates.uptime_kuma.after':
+			'Ouvrez-la et créez votre compte administrateur : Uptime Kuma le demande à la première visite.',
+		'templates.memos.description':
+			'Un espace léger pour vos notes et billets courts, stockés dans SQLite.',
+		'templates.memos.after':
+			'Ouvrez-la et inscrivez-vous. Le premier compte créé administre l’instance.',
+		'templates.memos.instance_url': 'URL de l’instance',
+		'templates.gitea.description': 'Git auto-hébergé avec pull requests, tickets et paquets.',
+		'templates.gitea.after':
+			'Ouvrez-la pour lancer l’installateur et créer le compte administrateur. Le clonage passe par HTTPS ; SSH est désactivé.',
+		'templates.gitea.root_url': 'URL racine',
+		'templates.vaultwarden.description':
+			'Un serveur léger pour les applications Bitwarden : mots de passe, notes et clés d’accès.',
+		'templates.vaultwarden.after':
+			'Créez votre compte dans le coffre web, puis désactivez les inscriptions. La page d’administration est à /admin, avec le jeton administrateur (copiez-le ci-dessus, ou retrouvez-le dans les variables de l’application).',
+		'templates.vaultwarden.domain': 'Domaine',
+		'templates.vaultwarden.admin_token': 'Jeton administrateur',
+		'templates.vaultwarden.signups': 'Autoriser les inscriptions',
+		'templates.vaultwarden.signups.help':
+			'Laissez activé pour créer votre premier compte, puis désactivez-le.',
+		'templates.gotify.description':
+			'Envoyez des notifications push depuis vos scripts et applications vers votre téléphone ou navigateur.',
+		'templates.gotify.after':
+			'Connectez-vous avec l’administrateur choisi. Gotify ne le lit qu’au premier démarrage ; modifiez-le ensuite dans Gotify.',
+		'templates.gotify.username': 'Nom de l’administrateur',
+		'templates.gotify.username.help': 'Sert à se connecter à Gotify.',
+		'templates.gotify.password': 'Mot de passe administrateur',
+		'templates.gotify.password.help':
+			'Au moins 8 caractères. Sans lui, Gotify utiliserait admin / admin.',
+		'templates.postgresql.description':
+			'La base de données relationnelle de votre backend, avec un mot de passe généré.',
+		'templates.postgresql.after':
+			'Branchez votre backend sur la chaîne de connexion ci-dessus. La base et l’utilisateur s’appellent tous deux app.',
+		'templates.postgresql.password': 'Mot de passe de la base',
+		'templates.valkey.description':
+			'Un stockage compatible Redis pour les caches, sessions et files, enregistré sur disque.',
+		'templates.valkey.after':
+			'Utilisez la chaîne de connexion ci-dessus avec n’importe quel client Redis. Chaque commande demande le mot de passe.',
+		'templates.valkey.password': 'Mot de passe',
+		'templates.mailpit.description':
+			'Récupère les e-mails envoyés par vos apps et les affiche dans une boîte web. Rien n’est délivré.',
+		'templates.mailpit.after':
+			'Indiquez à votre app le serveur SMTP ci-dessus, avec n’importe quel identifiant. Ouvrez l’app pour lire ce qu’elle a envoyé : connectez-vous en admin avec le mot de passe.',
+		'templates.mailpit.password': 'Mot de passe de la boîte',
+		'templates.meilisearch.description':
+			'Une recherche instantanée et tolérante aux fautes pour les données de votre app.',
+		'templates.meilisearch.after':
+			'Envoyez les documents avec la clé maître, puis créez des clés de recherche seule pour votre frontend. Ouvrez l’app pour essayer des recherches.',
+		'templates.meilisearch.key': 'Clé maître',
+		'templates.rustfs.description':
+			'Un stockage compatible S3 pour les fichiers de votre app, avec une console web.',
+		'templates.rustfs.after':
+			'Branchez n’importe quel SDK S3 (en path-style) sur l’adresse ci-dessus, avec les clés d’accès et secrète. Ouvrez l’app pour la console : elle se connecte avec les mêmes clés.',
+		'templates.rustfs.access_key': 'Clé d’accès',
+		'templates.rustfs.secret_key': 'Clé secrète',
+		'templates.category.messaging': 'Messagerie',
+		'templates.category.auth': 'Connexion et utilisateurs',
+		'templates.field.email': 'Saisissez une adresse e-mail, comme vous@example.com.',
+		'templates.mariadb.description':
+			'La base de données compatible MySQL, avec des mots de passe générés.',
+		'templates.mariadb.after':
+			'Branchez votre backend sur la chaîne de connexion ci-dessus : la base et l’utilisateur s’appellent tous deux app. Le mot de passe root sert seulement à l’administration.',
+		'templates.mariadb.password': 'Mot de passe de la base',
+		'templates.mariadb.root_password': 'Mot de passe root',
+		'templates.pgadmin.description':
+			'Une interface web pour parcourir, interroger et gérer vos bases PostgreSQL.',
+		'templates.pgadmin.after':
+			'Ouvrez l’app et connectez-vous avec votre e-mail et le mot de passe. Ajoutez un serveur avec l’adresse de votre app PostgreSQL, comme postgres.db, port 5432, utilisateur app.',
+		'templates.pgadmin.email': 'Votre e-mail',
+		'templates.pgadmin.email.help': 'Vous vous connectez à pgAdmin avec.',
+		'templates.pgadmin.password': 'Mot de passe de connexion',
+		'templates.rabbitmq.description':
+			'Un courtier de messages pour les files et les tâches de fond, avec une console de gestion.',
+		'templates.rabbitmq.after':
+			'Branchez vos workers avec la chaîne AMQP ci-dessus. Ouvrez l’app pour la console : connectez-vous en app avec le mot de passe.',
+		'templates.rabbitmq.password': 'Mot de passe',
+		'templates.nats.description':
+			'Une messagerie rapide entre services : publication, abonnement et requêtes, avec des flux JetStream enregistrés sur disque.',
+		'templates.nats.after':
+			'Connectez n’importe quel client NATS avec l’URL ci-dessus : le jeton qu’elle contient est obligatoire.',
+		'templates.nats.token': 'Jeton',
+		'templates.keycloak.description':
+			'La connexion pour vos apps : utilisateurs, OpenID Connect et OAuth 2.0, en mode développement.',
+		'templates.keycloak.after':
+			'Ouvrez l’app et connectez-vous en admin avec le mot de passe. Créez un realm et un client pour votre app ; l’adresse ci-dessus permet à votre backend de vérifier les jetons.',
+		'templates.keycloak.password': 'Mot de passe admin',
+		'templates.keycloak.hostname': 'Adresse publique (émetteur des jetons)',
+		'templates.connect.title': 'Se connecter depuis vos apps',
+		'templates.credential.username': 'Nom d’utilisateur',
+		'templates.credential.password': 'Mot de passe',
+		'templates.credential.email': 'E-mail',
+		'templates.credential.token': 'Jeton',
+		'templates.credential.admin_page': 'Page d’administration',
+		'templates.credential.admin_token': 'Jeton d’administration',
+		'templates.credential.master_key': 'Clé maître',
+		'templates.credential.access_key': 'Clé d’accès',
+		'templates.credential.secret_key': 'Clé secrète',
+		'templates.credential.database': 'Base de données',
+		'templates.credential.root_password': 'Mot de passe root',
+		'templates.signin.title': 'Comment vous connecter',
+		'templates.signin.description': (name: string) =>
+			`Ce que ${name} demande à l’ouverture. Retrouvez-le sur la page de l’app, dans Connexion et accès.`,
+		'templates.reveal': (label: string) => `Afficher : ${label.toLowerCase()}`,
+		'templates.hide': (label: string) => `Masquer : ${label.toLowerCase()}`,
+		'access.open': 'Connexion et accès',
+		'access.description': (name: string) =>
+			`Ce que ${name} demande à l’ouverture, et où vos apps l’atteignent. Lu dans ses variables.`,
+		'access.open_it': 'L’ouvrir',
+		'access.signin': 'Se connecter avec',
+		'access.no_signin': 'Rien à saisir depuis checkship :',
+		'access.outside': 'Depuis l’extérieur de la cible',
+		'access.outside.help':
+			'Depuis votre machine, par exemple un outil de base de données : le port publié par la cible.',
+		'access.first_start': (name: string) =>
+			`${name} ne lit sa connexion qu’au premier démarrage : changez-la ensuite dans ${name}, pas dans les variables.`,
+		'access.variables': 'Modifier les variables',
+		'access.not_deployed':
+			'Pas encore déployée : voici les valeurs avec lesquelles elle démarrera.',
+		'access.no_template':
+			'checkship ne reconnaît pas cette app comme un modèle : il ne peut pas savoir quelles variables servent à s’y connecter.',
+		'detail.tcp.outside': 'Depuis l’extérieur',
+		'detail.tcp.apps': 'Depuis vos apps',
+		'detail.tcp.copy': (address: string) => `Copier ${address}`,
+		'detail.visit.tcp': 'Pas de page web : elle s’atteint en TCP, voir Connexion et accès',
+		'templates.no_page': 'Pas de page web : vos apps s’y connectent à l’adresse ci-dessous.',
+		'templates.connect.description': (target: string) =>
+			`Vos applications sur ${target} l’atteignent à cette adresse, tant qu’elles publient un port.`,
+		'templates.connect.host': 'Adresse',
+		'templates.connect.url': 'Chaîne de connexion',
+		'templates.connect.copy_url': 'Copier la chaîne de connexion',
+		'templates.connect.copy_host': 'Copier l’adresse',
 		'app.edit': "Modifier l'application",
 		'app.delete': "Supprimer l'application",
 		'app.delete.confirm': (name: string) => `Voulez-vous vraiment supprimer l'application ${name} ?
@@ -1386,6 +1578,7 @@ Vous devriez probablement essayer de rendre la cible accessible avant de la supp
 		'backups.details.no_restores.title': 'Jamais restaurée',
 		'apps.row.production': (status: string) => `Production : ${status}`,
 		'apps.row.staging': (status: string) => `Staging : ${status}`,
+		'apps.row.no_page': 'Pas de page web : les autres apps s’y connectent',
 		'targets.row.apps': (count: number) =>
 			count === 0 ? 'Aucune application' : count === 1 ? '1 application' : `${count} applications`,
 		'targets.row.configured': (date: string) => `Configurée le ${date}`,

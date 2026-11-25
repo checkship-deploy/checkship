@@ -24,7 +24,9 @@
 	import ArrowDown01Icon from '@hugeicons/core-free-icons/ArrowDown01Icon';
 	import File01Icon from '@hugeicons/core-free-icons/File01Icon';
 	import GitBranchIcon from '@hugeicons/core-free-icons/GitBranchIcon';
+	import Key01Icon from '@hugeicons/core-free-icons/Key01Icon';
 	import LinkSquare02Icon from '@hugeicons/core-free-icons/LinkSquare02Icon';
+	import { page } from '$app/state';
 	import Loading03Icon from '@hugeicons/core-free-icons/Loading03Icon';
 	import RepeatIcon from '@hugeicons/core-free-icons/RepeatIcon';
 	import Rocket01Icon from '@hugeicons/core-free-icons/Rocket01Icon';
@@ -41,11 +43,14 @@
 	import type { AppDetail } from '#lib/resources/apps.ts';
 	import service, { DeploymentStatus, type Deployment } from '#lib/resources/deployments.ts';
 	import { isCancelled, isFailure } from '#lib/status.ts';
+	import { templateOfApp } from '#lib/templates/recognise.ts';
+	import TemplateLogo from '#lib/templates/template-logo.svelte';
 	import { cn } from '#lib/utils.js';
 	import DeploymentPreview from './deployment-preview.svelte';
 	import DeployForm from './deployments/deploy-form.svelte';
 	import AppTabs from './app-tabs.svelte';
-	import { branchOf, liveUrl } from './app-state.ts';
+	import AccessDrawer from './access-drawer.svelte';
+	import { branchOf, liveUrl, socketAddresses } from './app-state.ts';
 
 	type Props = {
 		app: AppDetail;
@@ -136,12 +141,30 @@
 
 	const productionBranch = $derived(branchOf(app, 'production'));
 	const stagingBranch = $derived(branchOf(app, 'staging'));
+	/** The template the app runs, recognised from its compose file, for the logo by its name. */
+	const template = $derived(templateOfApp(app));
+	/**
+	 * Sign-in and connection: for an app from a template, or any app reached over tcp or udp.
+	 * ?access on the URL opens it, as the Applications row menu does.
+	 */
+	const sockets = $derived(
+		socketAddresses(app.latest_deployments.production, app.name, 'production')
+	);
+	const hasAccess = $derived(
+		!!template ||
+			sockets.length > 0 ||
+			socketAddresses(app.latest_deployments.staging, app.name, 'staging').length > 0
+	);
+	let accessOpen = $state(page.url.searchParams.has('access'));
 </script>
 
 <PageHeader
 	title={app.name}
 	crumbs={[{ href: routes.apps, label: l.translate('breadcrumb.applications') }]}
 >
+	{#snippet leading()}
+		{#if template}<TemplateLogo {template} class="size-7" />{/if}
+	{/snippet}
 	{#snippet actions()}
 		{#if !deleting}
 			<Button
@@ -150,13 +173,20 @@
 				target="_blank"
 				rel="noopener noreferrer"
 				disabled={!url}
-				title={url ?? l.translate('detail.visit.none')}
+				title={url ??
+					(sockets.length > 0 ? l.translate('detail.visit.tcp') : l.translate('detail.visit.none'))}
 			>
 				<Icon icon={LinkSquare02Icon} />
 				{visitDomain
 					? l.translate('detail.visit.domain', [visitDomain])
 					: l.translate('detail.visit')}
 			</Button>
+			{#if hasAccess}
+				<Button variant="outline" onclick={() => (accessOpen = true)}>
+					<Icon icon={Key01Icon} />
+					{l.translate('access.open')}
+				</Button>
+			{/if}
 			<div class="flex gap-0.5">
 				<Button
 					class="rounded-r-none"
@@ -330,6 +360,8 @@
 		</Button>
 	{/snippet}
 </Drawer>
+
+<AccessDrawer bind:open={accessOpen} {app} {template} />
 
 {#if previewNumber > 0}
 	<DeploymentPreview {app} bind:number={previewNumber} bind:open={previewOpen} />

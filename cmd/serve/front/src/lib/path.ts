@@ -8,6 +8,7 @@ const routes = {
 	dashboard: '/',
 	apps: '/apps',
 	createApp: '/apps/new',
+	templates: '/apps/templates',
 	editApp: (id: string) => `/apps/${id}/edit`,
 	app: (id: string) => `/apps/${id}`,
 	appDeployments: (id: string) => `/apps/${id}/deployments`,

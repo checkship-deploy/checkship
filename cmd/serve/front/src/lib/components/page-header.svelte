@@ -14,9 +14,11 @@
 		crumbs?: Crumb[];
 		actions?: Snippet;
 		status?: Snippet;
+		/** Drawn before the title, such as the logo of the template an application runs. */
+		leading?: Snippet;
 	};
 
-	let { title, crumbs = [], actions, status }: Props = $props();
+	let { title, crumbs = [], actions, status, leading }: Props = $props();
 </script>
 
 <svelte:head>
@@ -35,12 +37,18 @@
 				</a>
 				<Icon icon={ArrowRight01Icon} class="size-3.5 text-muted-foreground" />
 			{/each}
-			<h1 aria-current="page" class="min-w-0 truncate text-xl/7 font-semibold tracking-tight">
-				{title}
-			</h1>
+			<span class="flex min-w-0 items-center gap-2">
+				{@render leading?.()}
+				<h1 aria-current="page" class="min-w-0 truncate text-xl/7 font-semibold tracking-tight">
+					{title}
+				</h1>
+			</span>
 		</nav>
 	{:else}
-		<h1 class="min-w-0 truncate text-xl/7 font-semibold tracking-tight">{title}</h1>
+		<span class="flex min-w-0 items-center gap-2">
+			{@render leading?.()}
+			<h1 class="min-w-0 truncate text-xl/7 font-semibold tracking-tight">{title}</h1>
+		</span>
 	{/if}
 	{#if actions}
 		<div class="flex flex-wrap items-center gap-1.5">{@render actions()}</div>

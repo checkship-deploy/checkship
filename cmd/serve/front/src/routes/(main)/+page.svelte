@@ -11,7 +11,6 @@
 	import TestTube01Icon from '@hugeicons/core-free-icons/TestTube01Icon';
 	import Rocket01Icon from '@hugeicons/core-free-icons/Rocket01Icon';
 	import Calendar03Icon from '@hugeicons/core-free-icons/Calendar03Icon';
-	import Add01Icon from '@hugeicons/core-free-icons/Add01Icon';
 	import ArrowRight01Icon from '@hugeicons/core-free-icons/ArrowRight01Icon';
 	import CancelCircleIcon from '@hugeicons/core-free-icons/CancelCircleIcon';
 	import Tick02Icon from '@hugeicons/core-free-icons/Tick02Icon';
@@ -29,6 +28,7 @@
 	import Tile from '#lib/components/dashboard/tile.svelte';
 	import Icon from '#lib/components/icon.svelte';
 	import Illustration from '#lib/components/illustration.svelte';
+	import NewAppMenu from '#lib/components/new-app-menu.svelte';
 	import PageHeader from '#lib/components/page-header.svelte';
 	import SectionHeading from '#lib/components/section-heading.svelte';
 	import Segmented from '#lib/components/segmented.svelte';
@@ -218,10 +218,7 @@
 				{/each}
 			</Select.Content>
 		</Select.Root>
-		<Button href={routes.createApp}>
-			<Icon icon={Add01Icon} />
-			{l.translate('app.new')}
-		</Button>
+		<NewAppMenu />
 	{/snippet}
 	{#snippet status()}
 		{#if $apps}<span>{l.translate('dashboard.status.apps', [$apps.length])}</span>{/if}

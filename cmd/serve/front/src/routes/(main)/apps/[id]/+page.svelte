@@ -56,7 +56,8 @@
 	import dashboard from '#lib/resources/dashboard.ts';
 	import AppWorkspace, { type AppActions } from './app-workspace.svelte';
 	import DeployStrip from '#lib/components/deploy-strip.svelte';
-	import { liveUrls } from './app-state.ts';
+	import IconButton from '#lib/components/icon-button.svelte';
+	import { liveUrls, socketAddresses } from './app-state.ts';
 	import EmptyState from '#lib/components/empty-state.svelte';
 
 	let { data } = $props();
@@ -318,7 +319,41 @@
 											</p>
 											<p class="text-xs text-faint">{l.translate('domains.primary.explain')}</p>
 										{/if}
-									{:else}
+									{:else if socketAddresses(latest, app.name, environment).length > 0}
+										<!-- A database or a broker: no web page, but these addresses. -->
+										<dl class="flex min-w-0 flex-col gap-1 text-xs">
+											{#each socketAddresses(latest, app.name, environment) as socket (socket.inside)}
+												{#if socket.outside}
+													<div class="flex min-w-0 items-center gap-1.5">
+														<dt class="shrink-0 text-muted-foreground">
+															{l.translate('detail.tcp.outside')}
+														</dt>
+														<dd class="truncate font-mono text-label text-ink">{socket.outside}</dd>
+														<IconButton
+															icon={Copy01Icon}
+															iconClass="size-3.5"
+															class="size-6"
+															label={l.translate('detail.tcp.copy', [socket.outside])}
+															onclick={() => copy(socket.outside!)}
+														/>
+													</div>
+												{/if}
+												<div class="flex min-w-0 items-center gap-1.5">
+													<dt class="shrink-0 text-muted-foreground">
+														{l.translate('detail.tcp.apps')}
+													</dt>
+													<dd class="truncate font-mono text-label text-ink">{socket.inside}</dd>
+													<IconButton
+														icon={Copy01Icon}
+														iconClass="size-3.5"
+														class="size-6"
+														label={l.translate('detail.tcp.copy', [socket.inside])}
+														onclick={() => copy(socket.inside)}
+													/>
+												</div>
+											{/each}
+										</dl>
+									{:else if latest}
 										<p class="truncate text-label text-muted-foreground">
 											{l.translate('app.no_url')}
 										</p>

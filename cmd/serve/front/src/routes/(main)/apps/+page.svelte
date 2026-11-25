@@ -5,11 +5,11 @@
 	URL and Delete. Filter by name and target.
 -->
 <script lang="ts">
-	import Add01Icon from '@hugeicons/core-free-icons/Add01Icon';
 	import CommandLineIcon from '@hugeicons/core-free-icons/CommandLineIcon';
 	import Copy01Icon from '@hugeicons/core-free-icons/Copy01Icon';
 	import DashboardSquare01Icon from '@hugeicons/core-free-icons/DashboardSquare01Icon';
 	import Delete02Icon from '@hugeicons/core-free-icons/Delete02Icon';
+	import Key01Icon from '@hugeicons/core-free-icons/Key01Icon';
 	import Loading03Icon from '@hugeicons/core-free-icons/Loading03Icon';
 	import Rocket01Icon from '@hugeicons/core-free-icons/Rocket01Icon';
 	import Search01Icon from '@hugeicons/core-free-icons/Search01Icon';
@@ -17,11 +17,13 @@
 	import Settings02Icon from '@hugeicons/core-free-icons/Settings02Icon';
 	import ViewIcon from '@hugeicons/core-free-icons/ViewIcon';
 	import { toast } from 'svelte-sonner';
+	import { appUrl as urlOf } from '#lib/app-url.ts';
 	import { copyText } from '#lib/clipboard.ts';
 	import ConfirmDialog from '#lib/components/confirm-dialog.svelte';
 	import EmptyState from '#lib/components/empty-state.svelte';
 	import docs from '#lib/docs.ts';
 	import Icon from '#lib/components/icon.svelte';
+	import NewAppMenu from '#lib/components/new-app-menu.svelte';
 	import PageHeader from '#lib/components/page-header.svelte';
 	import StatusBadge from '#lib/components/status-badge.svelte';
 	import TimelineList from '#lib/components/timeline/timeline-list.svelte';
@@ -39,6 +41,9 @@
 	import type { Deployment } from '#lib/resources/deployments.ts';
 	import jobsService from '#lib/resources/jobs.ts';
 	import { deploymentBadge, deploymentMoment, isFailure } from '#lib/status.ts';
+	import { templateOfApp } from '#lib/templates/recognise.ts';
+	import { hasWebPage } from '#lib/templates/values.ts';
+	import TemplateLogo from '#lib/templates/template-logo.svelte';
 
 	const { data: apps } = service.queryAll();
 	const { data: jobs } = jobsService.queryAll({ page: 1 });
@@ -72,13 +77,13 @@
 
 	/** The default service's URL: <app>.<target host> (how checkship exposes production). */
 	function appUrl(app: App): string | undefined {
-		if (!app.production_target.url) return undefined;
-		try {
-			const t = new URL(app.production_target.url);
-			return `${t.protocol}//${app.name}.${t.host}`;
-		} catch {
-			return undefined;
-		}
+		return urlOf(app.production_target.url, app.name);
+	}
+
+	/** A database or cache from a template publishes no web port: its URL would open nothing. */
+	function hasNoPage(app: App): boolean {
+		const template = templateOfApp(app);
+		return !!template && !hasWebPage(template);
 	}
 
 	/** When the application last changed: its most recent deployment, else nothing. */
@@ -99,7 +104,7 @@
 	function detailsOf(app: App, url: string | undefined): string[] {
 		const staging = app.latest_deployments.staging;
 		return [
-			url ?? l.translate('targets.url.manual'),
+			hasNoPage(app) ? l.translate('apps.row.no_page') : (url ?? l.translate('targets.url.manual')),
 			app.production_target.name,
 			!app.cleanup_requested_at && staging
 				? l.translate('apps.row.staging', [deploymentText(staging)])
@@ -138,10 +143,7 @@
 
 <PageHeader title={l.translate('breadcrumb.applications')}>
 	{#snippet actions()}
-		<Button href={routes.createApp}>
-			<Icon icon={Add01Icon} />
-			{l.translate('app.new')}
-		</Button>
+		<NewAppMenu />
 	{/snippet}
 	{#snippet status()}
 		{#if $apps}
@@ -181,15 +183,22 @@
 				{#each shown as app (app.id)}
 					{@const url = appUrl(app)}
 					{@const production = app.latest_deployments.production}
+					{@const template = templateOfApp(app)}
 					{@const tile = app.cleanup_requested_at
 						? { icon: Loading03Icon, tone: 'muted' as const, spin: true }
 						: production
 							? deploymentTile(production.state)
 							: { icon: DashboardSquare01Icon, tone: 'muted' as const, spin: false }}
+					<!-- An app running a template's image shows that project's logo, and its badge keeps
+					     the state. While it deploys or is deleted, the spinner says so instead. -->
+					{#snippet logo()}
+						{#if template}<TemplateLogo {template} />{/if}
+					{/snippet}
 					<TimelineRow
 						icon={tile.icon}
 						tone={tile.tone}
 						spin={tile.spin}
+						tile={template && !tile.spin ? logo : undefined}
 						label={label(app, url)}
 						href={routes.app(app.id)}
 						muted={!!app.cleanup_requested_at}
@@ -215,6 +224,12 @@
 										{l.translate('menu.open')}
 									</RowMenuItem>
 									{#if !app.cleanup_requested_at}
+										{#if template}
+											<!-- Where its passwords, tokens and connection string are. -->
+											<RowMenuItem icon={Key01Icon} href="{routes.app(app.id)}?access">
+												{l.translate('access.open')}
+											</RowMenuItem>
+										{/if}
 										<RowMenuItem icon={Rocket01Icon} href={routes.createDeployment(app.id)}>
 											{l.translate('menu.deploy')}
 										</RowMenuItem>
@@ -279,10 +294,7 @@
 		description={l.translate('apps.empty.description')}
 	>
 		{#snippet action()}
-			<Button href={routes.createApp}>
-				<Icon icon={Add01Icon} />
-				{l.translate('app.new')}
-			</Button>
+			<NewAppMenu align="center" />
 		{/snippet}
 	</EmptyState>
 {/if}
