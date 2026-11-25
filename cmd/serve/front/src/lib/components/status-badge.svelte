@@ -11,7 +11,9 @@
 		| 'configuring'
 		| 'pending'
 		| 'deleting'
-		| 'cancelled';
+		| 'cancelled'
+		/** A template that asks for settings before it can deploy. */
+		| 'setup';
 </script>
 
 <script lang="ts">
@@ -21,6 +23,7 @@
 	import Clock01Icon from '@hugeicons/core-free-icons/Clock01Icon';
 	import Delete02Icon from '@hugeicons/core-free-icons/Delete02Icon';
 	import Loading03Icon from '@hugeicons/core-free-icons/Loading03Icon';
+	import SlidersHorizontalIcon from '@hugeicons/core-free-icons/SlidersHorizontalIcon';
 	import UnavailableIcon from '@hugeicons/core-free-icons/UnavailableIcon';
 	import type { IconData } from '#lib/components/icon.svelte';
 	import Icon from '#lib/components/icon.svelte';
@@ -44,7 +47,8 @@
 			},
 			pending: { fill: 'bg-raised', icon: Clock01Icon, tone: 'text-muted-foreground' },
 			cancelled: { fill: 'bg-raised', icon: UnavailableIcon, tone: 'text-muted-foreground' },
-			deleting: { fill: 'bg-danger-soft', icon: Delete02Icon, tone: 'text-danger' }
+			deleting: { fill: 'bg-danger-soft', icon: Delete02Icon, tone: 'text-danger' },
+			setup: { fill: 'bg-raised', icon: SlidersHorizontalIcon, tone: 'text-muted-foreground' }
 		};
 
 	const style = $derived(

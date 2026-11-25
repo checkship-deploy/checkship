@@ -116,7 +116,7 @@ func Handler(
 		}
 
 		result.Https = url.UseSSL()
-		result.Expected.Host = app.DefaultSubdomain(env) + "." + url.Host()
+		result.Expected.Host = app.DefaultSubdomain(env) + "." + url.Hostname()
 		expected := checker.Resolve(ctx, result.Expected.Host)
 		result.Expected.Addresses = addresses(expected)
 

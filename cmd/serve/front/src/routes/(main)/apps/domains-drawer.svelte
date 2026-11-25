@@ -56,7 +56,7 @@
 	const targetUrl = $derived(config.target.url);
 	const targetHost = $derived.by(() => {
 		try {
-			return targetUrl ? new URL(targetUrl).host : undefined;
+			return targetUrl ? new URL(targetUrl).hostname : undefined;
 		} catch {
 			return undefined;
 		}
@@ -116,7 +116,7 @@
 			return {
 				name,
 				port: web?.entrypoint?.port,
-				defaultHost: url ? new URL(url).host : undefined,
+				defaultHost: url ? new URL(url).hostname : undefined,
 				hostnames: draft[name] ?? []
 			};
 		});

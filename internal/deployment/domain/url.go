@@ -40,7 +40,14 @@ func UrlFrom(raw string) (Url, error) {
 	return result, nil
 }
 
+// Host returns the host with its port, if any, as in "docker.localhost:8090": the address
+// people open.
 func (u Url) Host() string { return u.value.Host }
+
+// Hostname returns the host without its port, as in "docker.localhost": the name DNS
+// resolves and a proxy routes on, since a request's port is never part of a host rule.
+func (u Url) Hostname() string { return u.value.Hostname() }
+
 func (u Url) UseSSL() bool { return u.value.Scheme == schemeHttps }
 
 // Returns the user part of the url if any.

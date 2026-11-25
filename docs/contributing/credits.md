@@ -25,7 +25,3 @@
 - [Versity S3 Gateway](https://github.com/versity/versitygw) as the built-in backup storage, and [BusyBox](https://busybox.net) to copy volumes
 
 **This site** is built with [VitePress](https://vitepress.dev).
-
-## Origins and license {#license}
-
-**checkship** started as a fork of [seelf](https://github.com/YuukanOO/seelf) by Julien Leicher. It has since been renamed and largely rewritten, and it keeps the original's [GNU General Public License v3.0](https://github.com/checkship-deploy/checkship/blob/main/LICENSE): you may use, study, share and change it under the same terms.

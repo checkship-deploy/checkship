@@ -149,7 +149,7 @@ func BuildDomains(
 		}
 
 		for _, entry := range entries {
-			if entry.env == input.Environment && entry.hostname.IsUnder(url.Host()) {
+			if entry.env == input.Environment && entry.hostname.IsUnder(url.Hostname()) {
 				errs[entry.field] = domain.ErrDomainReservedByTarget
 			}
 		}
@@ -158,7 +158,7 @@ func BuildDomains(
 	// checkship's own address: an application must not capture the dashboard
 	if reserved, isSet := rules.Reserved.TryGet(); isSet {
 		for _, entry := range entries {
-			if string(entry.hostname) == reserved.Host() {
+			if string(entry.hostname) == reserved.Hostname() {
 				errs[entry.field] = domain.ErrDomainReserved
 			}
 		}

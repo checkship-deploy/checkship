@@ -13,6 +13,190 @@ const translations = {
 	'app.not_found.cta': 'homepage',
 	'app.blankslate': `Looks like you have no application yet. <br />Applications represents <strong>services you want to deploy</strong> on your infrastructure. Start by <a href="${routes.createApp}">creating one!</a>`,
 	'app.new': 'New application',
+	'app.new.menu': 'Create an application',
+	'app.new.scratch': 'From scratch',
+	'app.new.scratch.hint': 'Name, source, targets and variables',
+	'app.new.template': 'From a template',
+	'app.new.template.hint': 'Ready-made apps, deployed in one step',
+	// Templates (New application › From a template)
+	'templates.title': 'Templates',
+	'templates.summary': (count: number) =>
+		`${count} templates · ready-made apps: pick one, check its settings, then deploy it`,
+	'templates.search': 'Search templates',
+	'templates.category': 'Category',
+	'templates.category.all': 'All',
+	'templates.category.monitoring': 'Monitoring',
+	'templates.category.notes': 'Notes',
+	'templates.category.developer': 'Developer tools',
+	'templates.category.security': 'Security',
+	'templates.category.notifications': 'Notifications',
+	'templates.category.database': 'Databases and caches',
+	'templates.category.email': 'Email',
+	'templates.category.search': 'Search',
+	'templates.category.storage': 'File storage',
+	'templates.ready': 'Ready to deploy',
+	'templates.needs_setup': 'Needs setup',
+	'templates.no_match.title': 'No template matches',
+	'templates.no_match.description':
+		'Try another name or category, or create the application from scratch.',
+	'templates.logos_notice': 'Logos are trademarks of their projects and only identify each app.',
+	'templates.deploy_title': (name: string) => `Deploy ${name}`,
+	'templates.target': 'Target',
+	'templates.live_at': 'It will be live at',
+	'templates.no_url':
+		'This target has no URL (a manual proxy), so type the app’s address in the settings below.',
+	'templates.https_needed': (name: string) =>
+		`This target uses http://. ${name} needs HTTPS (or a *.localhost address) in the browser, so signing in will fail here. Pick an HTTPS target, or deploy anyway.`,
+	'templates.required.title': 'Settings you must fill',
+	'templates.required.description': (name: string) => `${name} reads these when it first starts.`,
+	'templates.auto.title': 'Filled in for you',
+	'templates.auto.description': 'Saved as the app’s variables, so you can change them later.',
+	'templates.auto.from_url': 'From the app URL',
+	'templates.auto.generated': 'Generated',
+	'templates.generate': 'Generate',
+	'templates.copy': (label: string) => `Copy ${label.toLowerCase()}`,
+	'templates.regenerate': (label: string) => `Generate a new ${label.toLowerCase()}`,
+	'templates.after': 'After it deploys',
+	'templates.logo_credit': (credit: string) => `Logo: ${credit}`,
+	'templates.website': 'Website',
+	'templates.docs': 'Docs',
+	'templates.reason.name': 'Fix the name to deploy',
+	'templates.reason.fill': (count: number) =>
+		count === 1 ? 'Fill the 1 required setting' : `Fill the ${count} required settings`,
+	'templates.reason.fix': 'Fix the highlighted settings to deploy',
+	'templates.deploy': 'Deploy',
+	'templates.deploying_label': 'Deploying…',
+	'templates.queue_failed': (name: string) =>
+		`${name} was created, but its first deployment could not be queued. Deploy it from here.`,
+	'templates.field.required': 'Required.',
+	'templates.field.too_short': 'Use at least 8 characters.',
+	'templates.uptime_kuma.description':
+		'Watches your websites, APIs and services and alerts you when they go down.',
+	'templates.uptime_kuma.after':
+		'Open it and create your admin account: Uptime Kuma asks for it on the first visit.',
+	'templates.memos.description': 'A lightweight place for notes and short posts, stored in SQLite.',
+	'templates.memos.after': 'Open it and sign up. The first account you create runs the instance.',
+	'templates.memos.instance_url': 'Instance URL',
+	'templates.gitea.description': 'Self-hosted Git with pull requests, issues and packages.',
+	'templates.gitea.after':
+		'Open it to run the installer and create the admin account. Cloning works over HTTPS; SSH is off.',
+	'templates.gitea.root_url': 'Root URL',
+	'templates.vaultwarden.description':
+		'A light server for Bitwarden apps: passwords, notes and passkeys.',
+	'templates.vaultwarden.after':
+		'Create your account in the web vault, then turn sign-ups off. The admin page is at /admin, opened with the admin token (copy it above, or find it later in the app’s variables).',
+	'templates.vaultwarden.domain': 'Domain',
+	'templates.vaultwarden.admin_token': 'Admin token',
+	'templates.vaultwarden.signups': 'Allow sign-ups',
+	'templates.vaultwarden.signups.help': 'Leave on to create your first account, then turn it off.',
+	'templates.gotify.description':
+		'Send push notifications from scripts and apps to your phone or browser.',
+	'templates.gotify.after':
+		'Sign in with the admin you set. Gotify only reads it when it first starts; change it later in Gotify itself.',
+	'templates.gotify.username': 'Admin username',
+	'templates.gotify.username.help': 'Used to sign in to Gotify.',
+	'templates.gotify.password': 'Admin password',
+	'templates.gotify.password.help':
+		'At least 8 characters. Without it Gotify would use admin / admin.',
+	'templates.postgresql.description':
+		'The relational database for your backend, with a generated password.',
+	'templates.postgresql.after':
+		'Point your backend at the connection string above. The database and user are both app.',
+	'templates.postgresql.password': 'Database password',
+	'templates.valkey.description':
+		'A Redis-compatible store for caches, sessions and queues, saved to disk.',
+	'templates.valkey.after':
+		'Use the connection string above with any Redis client. Every command needs the password.',
+	'templates.valkey.password': 'Password',
+	'templates.mailpit.description':
+		'Catches the email your apps send and shows it in a web inbox. Nothing is delivered.',
+	'templates.mailpit.after':
+		'Set your app’s SMTP server to the address above, with any username. Open the app to read what it sent: sign in as admin with the password.',
+	'templates.mailpit.password': 'Inbox password',
+	'templates.meilisearch.description': 'Instant, typo-tolerant search for your app’s data.',
+	'templates.meilisearch.after':
+		'Send documents with the master key, then make search-only keys for your frontend. Open the app to try searches.',
+	'templates.meilisearch.key': 'Master key',
+	'templates.rustfs.description':
+		'S3-compatible storage for your app’s uploads and files, with a web console.',
+	'templates.rustfs.after':
+		'Point any S3 SDK (path-style) at the address above, with the access and secret keys. Open the app for the console: it signs in with the same keys.',
+	'templates.rustfs.access_key': 'Access key',
+	'templates.rustfs.secret_key': 'Secret key',
+	'templates.category.messaging': 'Messaging',
+	'templates.category.auth': 'Sign-in and users',
+	'templates.field.email': 'Enter an email address, such as you@example.com.',
+	'templates.mariadb.description': 'The MySQL-compatible database, with generated passwords.',
+	'templates.mariadb.after':
+		'Point your backend at the connection string above: database and user are both app. The root password is for administration only.',
+	'templates.mariadb.password': 'Database password',
+	'templates.mariadb.root_password': 'Root password',
+	'templates.pgadmin.description':
+		'A web interface to browse, query and manage your PostgreSQL databases.',
+	'templates.pgadmin.after':
+		'Open the app and sign in with your email and the password. Add a server with your PostgreSQL app’s address, such as postgres.db, port 5432, user app.',
+	'templates.pgadmin.email': 'Your email',
+	'templates.pgadmin.email.help': 'You sign in to pgAdmin with it.',
+	'templates.pgadmin.password': 'Sign-in password',
+	'templates.rabbitmq.description':
+		'A message broker for queues and background jobs, with a management console.',
+	'templates.rabbitmq.after':
+		'Connect your workers with the AMQP string above. Open the app for the console: sign in as app with the password.',
+	'templates.rabbitmq.password': 'Password',
+	'templates.nats.description':
+		'Fast messaging between services: publish, subscribe and request, with JetStream streams saved to disk.',
+	'templates.nats.after':
+		'Connect any NATS client with the URL above: the token in it is required.',
+	'templates.nats.token': 'Token',
+	'templates.keycloak.description':
+		'Sign-in for your apps: users, OpenID Connect and OAuth 2.0, in development mode.',
+	'templates.keycloak.after':
+		'Open the app and sign in as admin with the password. Create a realm and a client for your app; the address above is how your backend checks tokens.',
+	'templates.keycloak.password': 'Admin password',
+	'templates.keycloak.hostname': 'Public address (token issuer)',
+	'templates.connect.title': 'Connect from your apps',
+	'templates.credential.username': 'User name',
+	'templates.credential.password': 'Password',
+	'templates.credential.email': 'Email',
+	'templates.credential.token': 'Token',
+	'templates.credential.admin_page': 'Admin page',
+	'templates.credential.admin_token': 'Admin token',
+	'templates.credential.master_key': 'Master key',
+	'templates.credential.access_key': 'Access key',
+	'templates.credential.secret_key': 'Secret key',
+	'templates.credential.database': 'Database',
+	'templates.credential.root_password': 'Root password',
+	'templates.signin.title': 'How you sign in',
+	'templates.signin.description': (name: string) =>
+		`What ${name} asks for when you open it. Find it again on the app’s page, under Sign-in and connection.`,
+	'templates.reveal': (label: string) => `Show ${label.toLowerCase()}`,
+	'templates.hide': (label: string) => `Hide ${label.toLowerCase()}`,
+	'access.open': 'Sign-in and connection',
+	'access.description': (name: string) =>
+		`What ${name} asks for when you open it, and where your apps reach it. Read from its variables.`,
+	'access.open_it': 'Open it',
+	'access.signin': 'Sign in with',
+	'access.no_signin': 'Nothing to enter from checkship:',
+	'access.outside': 'From outside the target',
+	'access.outside.help':
+		'From your own machine, such as a database tool: the port the target published.',
+	'access.first_start': (name: string) =>
+		`${name} reads its sign-in only on its first start: change it in ${name} afterwards, not in the variables.`,
+	'access.variables': 'Edit the variables',
+	'access.not_deployed': 'Not deployed yet: these are the values it will start with.',
+	'access.no_template':
+		'checkship doesn’t recognise this app as a template, so it can’t tell which variables are its sign-in.',
+	'detail.tcp.outside': 'From outside',
+	'detail.tcp.apps': 'From your apps',
+	'detail.tcp.copy': (address: string) => `Copy ${address}`,
+	'detail.visit.tcp': 'No web page: it is reached over TCP, see Sign-in and connection',
+	'templates.no_page': 'It has no web page: your apps connect to it at the address below.',
+	'templates.connect.description': (target: string) =>
+		`Your applications on ${target} reach it at this address, as long as they publish a port.`,
+	'templates.connect.host': 'Address',
+	'templates.connect.url': 'Connection string',
+	'templates.connect.copy_url': 'Copy the connection string',
+	'templates.connect.copy_host': 'Copy the address',
 	'app.edit': 'Edit application',
 	'app.delete': 'Delete application',
 	'app.delete.confirm': (name: string) => `Are you sure you want to delete the application ${name}?
@@ -1347,6 +1531,7 @@ You may reconsider and try to make the target reachable before deleting it.`,
 	'backups.details.no_restores.title': 'Never restored',
 	'apps.row.production': (status: string) => `Production ${status}`,
 	'apps.row.staging': (status: string) => `Staging ${status}`,
+	'apps.row.no_page': 'No web page: other apps connect to it',
 	'targets.row.apps': (count: number) =>
 		count === 0 ? 'No applications' : count === 1 ? '1 application' : `${count} applications`,
 	'targets.row.configured': (date: string) => `Configured ${date}`,

@@ -279,7 +279,11 @@ func (b *deploymentProjectBuilder) transform() {
 			serviceDefinition.Networks = map[string]*types.ServiceNetworkConfig{}
 		}
 
-		serviceDefinition.Networks[b.networkName] = nil // nil here because there's no additional options to give
+		// Other applications on the target reach the service by this alias: the container name
+		// is long and changes with the app's ID, and the bare service name could clash.
+		serviceDefinition.Networks[b.networkName] = &types.ServiceNetworkConfig{
+			Aliases: []string{b.config.InternalHost(serviceName)},
+		}
 
 		// Update the project definition and state
 		b.project.Services[serviceName] = serviceDefinition

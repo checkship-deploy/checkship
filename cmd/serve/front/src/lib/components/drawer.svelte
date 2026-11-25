@@ -19,6 +19,8 @@
 		title: string;
 		description?: string | Snippet;
 		size?: 'form' | 'wide' | 'preview';
+		/** Before the title: a picture that names what the drawer is about (a template's logo). */
+		leading?: Snippet;
 		children: Snippet;
 		footer?: Snippet;
 		onclose?: () => void;
@@ -29,6 +31,7 @@
 		title,
 		description,
 		size = 'form',
+		leading,
 		children,
 		footer,
 		onclose
@@ -64,13 +67,16 @@
 		class={cn('md:w-140', size === 'wide' && 'md:w-155', size === 'preview' && 'md:w-170')}
 	>
 		<header class="flex shrink-0 items-start justify-between gap-4 pt-5 pr-4 pb-4 pl-6">
-			<div class="flex min-w-0 flex-col gap-1">
-				<Sheet.Title class="text-lg/[26px] font-semibold tracking-tight">{title}</Sheet.Title>
-				{#if description}
-					<Sheet.Description class="text-sm text-muted-foreground">
-						{#if typeof description === 'string'}{description}{:else}{@render description()}{/if}
-					</Sheet.Description>
-				{/if}
+			<div class="flex min-w-0 items-center gap-3.5">
+				{@render leading?.()}
+				<div class="flex min-w-0 flex-col gap-1">
+					<Sheet.Title class="text-lg/[26px] font-semibold tracking-tight">{title}</Sheet.Title>
+					{#if description}
+						<Sheet.Description class="text-sm text-muted-foreground">
+							{#if typeof description === 'string'}{description}{:else}{@render description()}{/if}
+						</Sheet.Description>
+					{/if}
+				</div>
 			</div>
 			<Tooltip.Root>
 				<Tooltip.Trigger>

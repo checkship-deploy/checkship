@@ -281,6 +281,36 @@ func Test_Deployment(t *testing.T) {
 		}, d.State.Services.Get(get_deployment.Services{}))
 	})
 
+	t.Run("should keep the target port on http urls only", func(t *testing.T) {
+		d := get_deployment.Deployment{
+			AppID:       "app-id",
+			Environment: "production",
+			Target: get_deployment.TargetSummary{
+				ID:  "target-id",
+				Url: monad.Value("http://docker.localhost:8090"),
+				Entrypoints: monad.Value(get_deployment.Entrypoints{
+					"app-id": {"production": {"tcp1": monad.Value[uint](32768)}},
+				}),
+			},
+			State: get_deployment.State{
+				Services: monad.Value(get_deployment.Services{
+					{Name: "app", Entrypoints: []get_deployment.Entrypoint{
+						{Name: "http1", Router: "http", Subdomain: monad.Value("app"), Port: 80},
+					}},
+					{Name: "db", Entrypoints: []get_deployment.Entrypoint{
+						{Name: "tcp1", Router: "tcp", IsCustom: true, Port: 5432},
+					}},
+				}),
+			},
+		}
+
+		d.ResolveServicesUrls()
+
+		services := d.State.Services.Get(get_deployment.Services{})
+		assert.DeepEqual(t, []string{"http://app.docker.localhost:8090"}, services[0].Urls)
+		assert.Equal(t, "tcp://docker.localhost:32768", services[1].Entrypoints[0].Url.Get(""))
+	})
+
 	t.Run("should list custom domains first in the service urls", func(t *testing.T) {
 		d := get_deployment.Deployment{
 			AppID:       "app-id",

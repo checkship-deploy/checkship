@@ -62,6 +62,39 @@ The first service in **alphabetical order** using an `http` router will take the
 
 If some services uses custom entrypoints, the target will be [reconfigured](/reference/targets#configuration) automatically to **make them available**.
 
+### Reaching a service from another application
+
+Every exposed service joins the target's network, shared by all the applications deployed there. On that network it answers at **`<service>.<app>`**, and **`<service>.<app>-staging`** in staging: the same name as its subdomain, without the target's host. For example, the `postgres` service of an application named `db` is `postgres.db:5432` for every other application on the target.
+
+```yml
+# The "db" application
+services:
+  postgres:
+    image: postgres:18.7-alpine
+    restart: unless-stopped
+    ports:
+      - "5432:5432/tcp" # exposed: it joins the target's network as postgres.db
+```
+
+```yml
+# Another application on the same target
+services:
+  api:
+    image: my-api
+    restart: unless-stopped
+    environment:
+      DATABASE_URL: postgres://app:secret@postgres.db:5432/app
+    ports:
+      - "8080:8080" # exposed too: only exposed services are on the target's network
+```
+
+- Use the **container port** (`5432` here), not the port the target published: the name reaches the container directly.
+- Only **exposed** services (with a port mapping) are on the target's network. A worker without ports can't reach `postgres.db`; give it a port mapping or put it in the same compose file.
+- Inside one compose file, services keep reaching each other by their bare name (`postgres`), as with compose locally.
+- Application names are unique on a target, so these names never clash, where two applications each with a `db` service would.
+
+A `tcp` or `udp` port is also published on the target, on the port shown on the deployment (`tcp://<host>:<port>`): protect such a service with a password, as the [templates](/guide/templates) do.
+
 ### Custom domains
 
 A service's [custom domains](/reference/applications#custom-domains) are added to its main `http` entrypoint as **one router per domain**, next to its default one:
@@ -84,9 +117,9 @@ In the future, it will be possible to deploy a sidecar proxy specifically for cu
 
 To identify which resources are managed by checkship, some **docker labels** are appended during the deployment process. Some labels such as `app.checkship.application`, `app.checkship.target`, `app.checkship.environment` and `app.checkship.custom_entrypoints` are appended to each resources: container, networks, volumes and images built while the others labels are only appended to the container.
 
-| Name                         | Description                                                                            |
-| ---------------------------- | -------------------------------------------------------------------------------------- |
-| app.checkship.exposed            | Only used to identify the checkship container when exposing it through a local target      |
+| Name                             | Description                                                                            |
+| -------------------------------- | -------------------------------------------------------------------------------------- |
+| app.checkship.exposed            | Only used to identify the checkship container when exposing it through a local target  |
 | app.checkship.application        | ID of the application                                                                  |
 | app.checkship.environment        | [Environment](/reference/applications#environments) of the resource                    |
 | app.checkship.target             | ID of the target on which the container must be exposed                                |

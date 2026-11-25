@@ -56,7 +56,7 @@ func newProxyProjectBuilder(client *client, target domain.Target) ProxyProjectBu
 	b := &proxyProjectBuilder{
 		client:      client,
 		target:      string(id),
-		host:        url.Host(),
+		host:        url.Hostname(),
 		entrypoints: target.CustomEntrypoints(),
 		assigned:    make(domain.TargetEntrypointsAssigned),
 		networkName: targetPublicNetworkName(idLower),

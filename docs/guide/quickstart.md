@@ -67,7 +67,7 @@ Click **Create target**. The target starts as **Configuring** while **checkship*
 
 ## Create your first application
 
-Open the [Applications page](http://localhost:8080/apps) and click [New application](http://localhost:8080/apps/new).
+Open the [Applications page](http://localhost:8080/apps), click **New application** and pick **From scratch**. (To deploy a ready-made app such as Uptime Kuma or Gitea in one step instead, pick **From a template**: see [Templates](/guide/templates).)
 
 - **Name**: `welcome`. The name becomes part of every URL **checkship** exposes, so it must be **unique** on a target.
 - **Version control**: leave **Use a Git repository** off. We'll upload an archive instead.
