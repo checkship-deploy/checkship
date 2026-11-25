@@ -63,4 +63,13 @@ func Test_ConfigSnapshot(t *testing.T) {
 
 		assert.Equal(t, fmt.Sprintf("my-app-staging-%s", strings.ToLower(string(app.ID()))), conf.ProjectName())
 	})
+
+	t.Run("should name a service the way other applications reach it", func(t *testing.T) {
+		app := fixture.App(fixture.WithAppName("my-db"))
+		production := fixture.Deployment(fixture.FromApp(app))
+		staging := fixture.Deployment(fixture.FromApp(app), fixture.ForEnvironment(domain.Staging))
+
+		assert.Equal(t, "postgres.my-db", production.Config().InternalHost("postgres"))
+		assert.Equal(t, "postgres.my-db-staging", staging.Config().InternalHost("postgres"))
+	})
 }

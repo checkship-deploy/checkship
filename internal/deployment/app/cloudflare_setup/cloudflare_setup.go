@@ -427,7 +427,7 @@ func (d Deps) sync(ctx context.Context, id domain.TargetID, mode monad.Maybe[str
 
 	// Where each domain's record points: the tunnel, or the environment's default address
 	content := func(e entry) string {
-		return string(e.AppName) + environmentSuffix(e.Environment) + "." + url.Host()
+		return string(e.AppName) + environmentSuffix(e.Environment) + "." + url.Hostname()
 	}
 
 	if conn.Mode == domain.CloudflareModeTunnel {

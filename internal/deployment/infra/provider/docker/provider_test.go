@@ -216,9 +216,11 @@ wSD0v0RcmkITP1ZR0AAAAYcHF1ZXJuYUBMdWNreUh5ZHJvLmxvY2FsAQID
 	})
 
 	t.Run("should correctly setup needed stuff on a target", func(t *testing.T) {
+		// The URL's port, as behind a forwarder, is left out of the host rule: the proxy
+		// routes on the hostname only.
 		t.Run("with automatic proxy, no-ssl, no custom entrypoints", func(t *testing.T) {
 			target := fixture.Target(fixture.WithProviderConfig(docker.Data{}))
-			assert.Nil(t, target.ExposeServicesAutomatically(domain.NewTargetUrlRequirement(must.Panic(domain.UrlFrom("http://docker.localhost")), true)))
+			assert.Nil(t, target.ExposeServicesAutomatically(domain.NewTargetUrlRequirement(must.Panic(domain.UrlFrom("http://docker.localhost:8090")), true)))
 			targetIdLower := strings.ToLower(string(target.ID()))
 			provider, mock := arrange(config.Default(config.WithTestDefaults()))
 
@@ -682,10 +684,9 @@ volumes:
 					assert.DeepEqual(t, types.MappingWithEquals{
 						"DSN": &dsn,
 					}, service.Environment)
-					assert.DeepEqual(t, map[string]*types.ServiceNetworkConfig{
-						"default":                  nil,
-						expectedGatewayNetworkName: nil,
-					}, service.Networks)
+					assert.Equal(t, 2, len(service.Networks))
+					assert.True(t, service.Networks["default"] == nil)
+					assert.DeepEqual(t, []string{deployment.Config().InternalHost(service.Name)}, service.Networks[expectedGatewayNetworkName].Aliases)
 				case "db":
 					entrypointName := string(entrypoints[3].Name())
 					postgresUser := deployment.Config().EnvironmentVariablesFor("db").MustGet()["POSTGRES_USER"]
@@ -708,10 +709,9 @@ volumes:
 						"POSTGRES_USER":     &postgresUser,
 						"POSTGRES_PASSWORD": &postgresPassword,
 					}, service.Environment)
-					assert.DeepEqual(t, map[string]*types.ServiceNetworkConfig{
-						"default":                  nil,
-						expectedGatewayNetworkName: nil,
-					}, service.Networks)
+					assert.Equal(t, 2, len(service.Networks))
+					assert.True(t, service.Networks["default"] == nil)
+					assert.DeepEqual(t, []string{deployment.Config().InternalHost(service.Name)}, service.Networks[expectedGatewayNetworkName].Aliases)
 					assert.DeepEqual(t, []types.ServiceVolumeConfig{
 						{
 							Type:   types.VolumeTypeVolume,

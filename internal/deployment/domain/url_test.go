@@ -51,6 +51,16 @@ func Test_Url(t *testing.T) {
 		assert.Equal(t, "http://an-app.something.com", subdomained.String())
 	})
 
+	t.Run("should keep the port in the host but not in the hostname", func(t *testing.T) {
+		url := must.Panic(domain.UrlFrom("http://docker.localhost:8090"))
+		subdomained := url.SubDomain("an-app")
+
+		assert.Equal(t, "docker.localhost:8090", url.Host())
+		assert.Equal(t, "docker.localhost", url.Hostname())
+		assert.Equal(t, "http://an-app.docker.localhost:8090", subdomained.String())
+		assert.Equal(t, "an-app.docker.localhost", subdomained.Hostname())
+	})
+
 	t.Run("should implement the valuer interface", func(t *testing.T) {
 		url := must.Panic(domain.UrlFrom("http://something.com"))
 		value, err := url.Value()

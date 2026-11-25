@@ -1,6 +1,7 @@
 package get_deployment
 
 import (
+	"net"
 	"strconv"
 	"strings"
 	"time"
@@ -169,9 +170,19 @@ func (d *Deployment) ResolveServicesUrls() {
 			}
 
 			entrypoint.PublishedPort.Set(publishedPort)
-			entrypoint.Url.Set(entrypoint.Router + "://" + host + ":" + strconv.FormatUint(uint64(publishedPort), 10))
+			entrypoint.Url.Set(entrypoint.Router + "://" + withoutPort(host) + ":" + strconv.FormatUint(uint64(publishedPort), 10))
 
 			services[i].Entrypoints[j] = entrypoint
 		}
 	}
+}
+
+// The host of a custom entrypoint gets its own published port: the target URL's port, as in
+// http://docker.localhost:8090, belongs to the http entrypoint only.
+func withoutPort(host string) string {
+	if h, _, err := net.SplitHostPort(host); err == nil {
+		return h
+	}
+
+	return host
 }

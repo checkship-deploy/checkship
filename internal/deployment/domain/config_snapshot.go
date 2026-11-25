@@ -109,6 +109,14 @@ func (c ConfigSnapshot) subDomain(service string, isDefault bool) string {
 	return subdomain
 }
 
+// The name other applications on the target reach a service at, on the target's network:
+// <service>.<app>, with -staging in staging, so "postgres.db" or "postgres.db-staging". App
+// names are unique on a target, so these are too, where a bare service name such as "db"
+// would clash between applications.
+func (c ConfigSnapshot) InternalHost(service string) string {
+	return service + "." + c.subDomain(service, true)
+}
+
 // Builds a unique image name for the given service.
 func (c ConfigSnapshot) imageName(service string) string {
 	return string(c.appname) + "-" + strings.ToLower(string(c.appid)) + "/" + service + ":" + string(c.environment)
