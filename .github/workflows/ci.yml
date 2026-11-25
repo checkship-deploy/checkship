@@ -68,24 +68,19 @@ jobs:
         with:
           node-version: 24
           cache: npm
-      # Publishing needs GitHub Pages, which a private repository may not have: set the
-      # DOCS_PAGES repository variable to true once Pages is enabled (source: GitHub Actions).
-      # Without it the docs are still built, so a broken page still fails the job.
       - name: Setup Pages
-        if: vars.DOCS_PAGES == 'true'
         uses: actions/configure-pages@v4
       - name: Install dependencies
         run: npm ci
       - name: Build with VitePress
         run: npm run docs:build
       - name: Upload artifact
-        if: vars.DOCS_PAGES == 'true'
         uses: actions/upload-pages-artifact@v3
         with:
           path: docs/.vitepress/dist
 
   deploy-docs:
-    if: github.ref_name == 'main' && vars.DOCS_PAGES == 'true'
+    if: github.ref_name == 'main'
     name: Deploy docs
     environment:
       name: github-pages
