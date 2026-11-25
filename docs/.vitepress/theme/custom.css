@@ -63,3 +63,69 @@
     padding: 0 64px;
   }
 }
+
+/* Template logos (guide/templates.md): each project's own file, at the size of a line of text in
+   tables and larger in the gallery. A logo with a dark-mode file comes as two images with the
+   classes below; a dark mark without one (Valkey) sits on a white plate in dark mode, as in the
+   dashboard. Copies of cmd/serve/front/static/template-logos, kept equal by the catalog tests. */
+.vp-doc img.template-logo {
+  display: inline-block;
+  width: 24px;
+  height: 24px;
+  margin: 0 8px 0 0;
+  object-fit: contain;
+  vertical-align: middle;
+}
+
+.vp-doc img.template-logo.dark-only,
+.dark .vp-doc img.template-logo.light-only {
+  display: none;
+}
+
+.dark .vp-doc img.template-logo.dark-only {
+  display: inline-block;
+}
+
+.dark .vp-doc img.template-logo.plate {
+  padding: 2px;
+  border-radius: 6px;
+  background: #ffffff;
+}
+
+.vp-doc .template-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+  gap: 8px;
+  margin: 16px 0;
+}
+
+.vp-doc .template-grid a {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 12px;
+  border: 1px solid var(--vp-c-divider);
+  border-radius: 8px;
+  color: var(--vp-c-text-1);
+  font-weight: 500;
+  text-decoration: none;
+  transition: border-color 0.2s;
+}
+
+.vp-doc .template-grid a:hover {
+  border-color: var(--vp-c-brand-1);
+}
+
+.vp-doc .template-grid img.template-logo {
+  width: 28px;
+  height: 28px;
+  margin: 0;
+}
+
+.vp-doc .template-grid small {
+  display: block;
+  color: var(--vp-c-text-2);
+  font-size: 12px;
+  font-weight: 400;
+  line-height: 16px;
+}

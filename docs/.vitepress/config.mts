@@ -28,6 +28,7 @@ export default defineConfig({
         text: "Guide",
         items: [
           { text: "Quickstart", link: "/guide/quickstart" },
+          { text: "Templates", link: "/guide/templates" },
           { text: "Installation", link: "/guide/installation" },
           { text: "Updating", link: "/guide/updating" },
           { text: "Configuration", link: "/guide/configuration" },

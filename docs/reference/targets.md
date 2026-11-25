@@ -17,6 +17,8 @@ When declaring a target, you must choose how the proxy (needed to make your serv
 
 If the target manages the proxy itself, this url **determines where your applications will be made available**. It should be a **root url** as applications will use subdomains on it.
 
+It may carry a port, such as `http://docker.localhost:8090`, when something in front of the target forwards that port to the proxy, which still listens on 80 (and 443). Application links keep the port; the proxy routes on the hostname alone, and DNS records point to it.
+
 The scheme associated with this url (`http` or `https`) will determine if certificates should be generated or not. With `https`, the proxy gets them from Let's Encrypt with the **HTTP-01** challenge (port 80 must be reachable from the internet), which also works for [custom domains](/reference/applications#custom-domains) proxied by Cloudflare. Targets set up by a version that used the TLS-ALPN-01 challenge are reconfigured once, on their own, at startup.
 
 Only targets with an automatic proxy can serve [custom domains](/reference/applications#custom-domains).
