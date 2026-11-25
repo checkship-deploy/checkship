@@ -63,7 +63,8 @@ describe('the template catalog', () => {
 			if (!template.connect) expect(ports.some((p) => !p.endsWith('/tcp'))).toBe(true);
 			// Bind mounts are not kept between deployments: named volumes only.
 			expect(template.compose).not.toMatch(/^\s+- \.{0,2}\//m);
-			expect(template.compose).toMatch(/^volumes:/m);
+			// A service with something to keep declares its volume; a stateless one says so.
+			if (!template.stateless) expect(template.compose).toMatch(/^volumes:/m);
 			expect(template.compose).toContain('restart: unless-stopped');
 		});
 
@@ -104,7 +105,10 @@ describe('the template catalog', () => {
 		test('reads its sign-in from its own fields, in every language', () => {
 			for (const credential of template.credentials ?? []) {
 				for (const [, key] of credential.value.matchAll(/\{([A-Za-z0-9_]+)\}/g)) {
-					expect(key === 'url' || template.fields.some((f) => f.key === key), key).toBe(true);
+					expect(
+						key === 'url' || key === 'ws' || template.fields.some((f) => f.key === key),
+						key
+					).toBe(true);
 				}
 				expect(en.translations).toHaveProperty([credential.label as string]);
 				expect(fr.translations).toHaveProperty([credential.label as string]);
@@ -113,7 +117,8 @@ describe('the template catalog', () => {
 
 		test('says how to sign in, or that the first visit creates the account', () => {
 			// Apps you open without anything from checkship create their account in the app.
-			const createdInApp = ['uptime-kuma', 'memos', 'gitea'];
+			// phpMyAdmin signs in with a database's own user, from that database's app.
+			const createdInApp = ['uptime-kuma', 'memos', 'gitea', 'phpmyadmin'];
 			expect(!!template.credentials?.length || createdInApp.includes(template.id)).toBe(true);
 		});
 

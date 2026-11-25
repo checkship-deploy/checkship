@@ -12,7 +12,8 @@ export type TemplateCategory =
 	| 'search'
 	| 'storage'
 	| 'messaging'
-	| 'auth';
+	| 'auth'
+	| 'backend';
 
 /**
  * One setting of a template, saved as an app variable of the template's service. A raw compose
@@ -44,6 +45,11 @@ export type TemplateField = {
 	 * Copy and the connection URL use the secret alone.
 	 */
 	prefix?: string;
+	/**
+	 * generated: mix lower and upper case letters, digits and URL-safe symbols (-_.~) rather than
+	 * hex, for images that refuse a weaker password (OpenObserve).
+	 */
+	strong?: boolean;
 	/** derived: the app URL as is, or with a trailing slash. */
 	derive?: 'url' | 'url-slash';
 	/** optional: the switch's starting position. */
@@ -52,8 +58,9 @@ export type TemplateField = {
 
 /**
  * One thing a person signs in or connects with, read from the app's variables: a user name, a
- * password, a token. `value` takes `{FIELD_KEY}` (that field's secret, without its prefix) and
- * `{url}` (the app's URL) placeholders; anything else is shown as written.
+ * password, a token. `value` takes `{FIELD_KEY}` (that field's secret, without its prefix),
+ * `{url}` (the app's URL) and `{ws}` (the same URL as ws:// or wss://) placeholders; anything else
+ * is shown as written.
  */
 export type TemplateCredential = {
 	label: AppTranslationsString;
@@ -102,6 +109,13 @@ export type Template = {
 	 * account is changed in the app, and a new value in the variables does nothing.
 	 */
 	firstStartOnly?: boolean;
+	/**
+	 * Its web port carries no page, only a protocol (Mosquitto's MQTT over WebSockets): lists say
+	 * "No web page" and the drawer shows addresses rather than a Visit link that opens nothing.
+	 */
+	noWebPage?: boolean;
+	/** Keeps nothing worth a volume (Centrifugo's memory engine, phpMyAdmin): none is declared. */
+	stateless?: boolean;
 	/** Who owns the logo and under which license, shown under the drawer. */
 	logoCredit: string;
 	website: string;

@@ -55,14 +55,18 @@
 	type Props = {
 		app: AppDetail;
 		apiKey: string;
-		tab: 'overview' | 'deployments' | 'logs' | 'backups' | 'settings';
+		tab: 'overview' | 'deployments' | 'compose' | 'logs' | 'backups' | 'settings';
 		children: Snippet<[AppActions]>;
 	};
 
 	let { app, apiKey, tab, children }: Props = $props();
 
 	const deleting = $derived(!!app.cleanup_requested_at);
-	const url = $derived(liveUrl(app.latest_deployments.production));
+	// A template whose web port carries no page (Mosquitto's MQTT over WebSockets) has nothing to
+	// visit: its addresses are in Sign-in and connection.
+	const url = $derived(
+		templateOfApp(app)?.noWebPage ? undefined : liveUrl(app.latest_deployments.production)
+	);
 	// With a custom domain (seelf#5), the button names it: that's where it goes.
 	const visitDomain = $derived(
 		app.latest_deployments.production?.state.services?.some((s) => s.domains?.length) && url

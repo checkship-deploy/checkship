@@ -167,6 +167,81 @@ export default {
 		'templates.keycloak.password': 'Mot de passe admin',
 		'templates.keycloak.hostname': 'Adresse publique (émetteur des jetons)',
 		'templates.connect.title': 'Se connecter depuis vos apps',
+		'templates.category.backend': 'Backends et API',
+		'templates.credential.api_key': 'Clé d’API',
+		'templates.credential.token_key': 'Clé de signature des jetons',
+		'templates.credential.websocket': 'Adresse WebSocket',
+		'templates.openobserve.description':
+			'Journaux, métriques et traces de vos apps via OpenTelemetry, avec recherche et tableaux de bord.',
+		'templates.openobserve.after':
+			'Pointez l’exportateur OpenTelemetry de votre app (OTLP en HTTP) vers l’adresse ci-dessus, avec votre e-mail et le mot de passe. Ouvrez l’app pour chercher et visualiser ce qu’elle a envoyé.',
+		'templates.openobserve.email': 'Votre e-mail',
+		'templates.openobserve.email.help':
+			'Vous vous connectez à OpenObserve avec, et vos apps envoient leurs données avec.',
+		'templates.openobserve.password': 'Mot de passe',
+		'templates.directus.description':
+			'Un backend pour votre frontend : modèles de données, API REST et GraphQL, fichiers et utilisateurs, avec une app d’administration.',
+		'templates.directus.after':
+			'Ouvrez l’app et connectez-vous avec votre e-mail et le mot de passe. Modélisez vos données, puis appelez son API REST ou GraphQL depuis votre frontend.',
+		'templates.directus.public_url': 'Adresse publique',
+		'templates.directus.email': 'Votre e-mail',
+		'templates.directus.email.help': 'Vous vous connectez à Directus avec.',
+		'templates.directus.password': 'Mot de passe admin',
+		'templates.directus.secret': 'Secret des jetons',
+		'templates.centrifugo.description':
+			'La messagerie temps réel en WebSocket pour vos frontends : canaux, présence et historique, publiés depuis votre backend.',
+		'templates.centrifugo.after':
+			'Votre backend publie via l’API ci-dessus avec la clé d’API, et signe les jetons de connexion avec la clé de signature. Votre frontend se connecte à l’adresse WebSocket. La page d’administration demande le mot de passe.',
+		'templates.centrifugo.origins': 'Origines autorisées',
+		'templates.centrifugo.origins.help':
+			'Là où tourne votre frontend, comme https://app.example.com ; plusieurs séparées par des espaces.',
+		'templates.centrifugo.admin_password': 'Mot de passe admin',
+		'templates.centrifugo.admin_secret': 'Secret de session admin',
+		'templates.centrifugo.hmac': 'Clé de signature des jetons',
+		'templates.centrifugo.api_key': 'Clé d’API',
+		'templates.mosquitto.description':
+			'Un broker MQTT pour les objets connectés et les apps temps réel, en TCP et en WebSocket pour les navigateurs.',
+		'templates.mosquitto.after':
+			'Connectez-vous à l’adresse MQTT ci-dessus en app avec le mot de passe. Les navigateurs utilisent l’adresse WebSocket. Les clients anonymes sont refusés.',
+		'templates.mosquitto.password': 'Mot de passe',
+		'templates.phpmyadmin.description': 'Une interface web pour vos bases MariaDB et MySQL.',
+		'templates.phpmyadmin.after':
+			'Ouvrez-le et connectez-vous avec l’utilisateur d’une base : le serveur est son adresse, comme mariadb.db, avec l’utilisateur et le mot de passe de la section Connexion et accès de cette base.',
+		'detail.tab.compose': 'Fichier compose',
+		'compose.title': 'Fichier compose',
+		'compose.description':
+			'Ce que cet environnement exécute. Modifiez-le et redéployez-le : checkship met en file un nouveau déploiement du fichier.',
+		'compose.from_deployment': (number: number, env: string) =>
+			`${env} exécute ce fichier, issu du déploiement n°${number}.`,
+		'compose.from_git': (env: string, branch: string) =>
+			`${env} se déploie depuis Git (${branch}) : son fichier compose est dans le dépôt. Modifiez-le là-bas et redéployez, ou écrivez-en un ci-dessous pour le déployer comme fichier compose.`,
+		'compose.from_archive': (env: string) =>
+			`${env} se déploie depuis une archive : son fichier compose est dedans. Envoyez une nouvelle archive, ou écrivez-en un ci-dessous pour le déployer comme fichier compose.`,
+		'compose.from_other': (env: string, other: string) =>
+			`${env} n’est pas encore déployé : ce fichier part de celui de ${other}.`,
+		'compose.none': (env: string) =>
+			`${env} n’est pas encore déployé. Écrivez son fichier compose ci-dessous pour le déployer.`,
+		'compose.template': (name: string) =>
+			`Elle exécute le modèle ${name}. Ses réglages sont les variables de l’app (Réglages), qui remplacent l’environnement écrit ici.`,
+		'compose.changed': 'Modifié',
+		'compose.reset': 'Rétablir',
+		'compose.copy': 'Copier',
+		'compose.download': 'Télécharger',
+		'compose.services': (list: string) => `Services : ${list}`,
+		'compose.help': 'Un fichier compose avec une clé services: au premier niveau.',
+		'compose.deploy': (env: string) => `Enregistrer et déployer en ${env}`,
+		'compose.deploy_hint':
+			'Déployer remplace ce qui tourne ; le déploiement précédent reste dans Déploiements, pour le redéployer.',
+		'compose.problem.empty': 'Écrivez d’abord un fichier compose.',
+		'compose.problem.tabs': 'Indentez avec des espaces : YAML n’accepte pas les tabulations.',
+		'compose.problem.no_services':
+			'Ajoutez une clé services: au premier niveau, avec au moins un service.',
+		'templates.compose.title': 'Fichier compose',
+		'templates.compose.description':
+			'Ce que Déployer envoie. Modifiez-le pour changer l’image, les ports ou les volumes ; les réglages ci-dessus restent des variables.',
+		'templates.compose.edited': 'Modifié',
+		'templates.compose.reset': 'Reprendre le fichier du modèle',
+		'templates.reason.compose': 'Corrigez le fichier compose pour déployer',
 		'templates.credential.username': 'Nom d’utilisateur',
 		'templates.credential.password': 'Mot de passe',
 		'templates.credential.email': 'E-mail',

@@ -1,5 +1,5 @@
 <!--
-	Application tabs (DESIGN.md §11.7): Overview, Deployments (with the total), Logs, Backups, Settings. Links, so
+	Application tabs (DESIGN.md §11.7): Overview, Deployments (with the total), Compose file, Logs, Backups, Settings. Links, so
 	each tab has its own address; the current one has the raised fill. They scroll sideways on phones
 	with no scrollbar drawn (it read as a line), and the current tab is scrolled into view.
 -->
@@ -7,6 +7,7 @@
 	import Archive02Icon from '@hugeicons/core-free-icons/Archive02Icon';
 	import ComputerTerminal01Icon from '@hugeicons/core-free-icons/ComputerTerminal01Icon';
 	import DashboardSquare01Icon from '@hugeicons/core-free-icons/DashboardSquare01Icon';
+	import FileCodeIcon from '@hugeicons/core-free-icons/FileCodeIcon';
 	import Layers01Icon from '@hugeicons/core-free-icons/Layers01Icon';
 	import Settings02Icon from '@hugeicons/core-free-icons/Settings02Icon';
 	import { tick } from 'svelte';
@@ -18,7 +19,7 @@
 
 	type Props = {
 		appId: string;
-		active: 'overview' | 'deployments' | 'logs' | 'backups' | 'settings';
+		active: 'overview' | 'deployments' | 'compose' | 'logs' | 'backups' | 'settings';
 	};
 
 	let { appId, active }: Props = $props();
@@ -62,6 +63,12 @@
 			icon: Layers01Icon,
 			label: l.translate('detail.tab.deployments'),
 			count: total
+		},
+		{
+			id: 'compose',
+			href: routes.appCompose(appId),
+			icon: FileCodeIcon,
+			label: l.translate('detail.tab.compose')
 		},
 		{
 			id: 'logs',

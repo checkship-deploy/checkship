@@ -10,6 +10,9 @@
 	import Alert02Icon from '@hugeicons/core-free-icons/Alert02Icon';
 	import Copy01Icon from '@hugeicons/core-free-icons/Copy01Icon';
 	import RefreshIcon from '@hugeicons/core-free-icons/RefreshIcon';
+	import ArrowDown01Icon from '@hugeicons/core-free-icons/ArrowDown01Icon';
+	import ArrowTurnBackwardIcon from '@hugeicons/core-free-icons/ArrowTurnBackwardIcon';
+	import FileCodeIcon from '@hugeicons/core-free-icons/FileCodeIcon';
 	import Rocket01Icon from '@hugeicons/core-free-icons/Rocket01Icon';
 	import ServerStack01Icon from '@hugeicons/core-free-icons/ServerStack01Icon';
 	import { toast } from 'svelte-sonner';
@@ -21,7 +24,10 @@
 	import Icon from '#lib/components/icon.svelte';
 	import IconButton from '#lib/components/icon-button.svelte';
 	import SettingRow from '#lib/components/setting-row.svelte';
+	import CodeEditor from '#lib/components/code-editor.svelte';
 	import * as Alert from '#lib/components/ui/alert/index.js';
+	import * as Collapsible from '#lib/components/ui/collapsible/index.js';
+	import { composeProblem } from '#lib/compose.ts';
 	import { Button } from '#lib/components/ui/button/index.js';
 	import { Input } from '#lib/components/ui/input/index.js';
 	import { Label } from '#lib/components/ui/label/index.js';
@@ -148,7 +154,7 @@
 		try {
 			const deployment = await deploymentsService.queue(app.id, {
 				environment: 'production',
-				raw: template.compose
+				raw: compose
 			});
 			number = deployment.deployment_number;
 		} catch {
@@ -183,8 +189,19 @@
 		)
 	);
 
+	/**
+	 * The compose file Deploy sends: the template's, or the person's edit of it (another image tag,
+	 * a port, a volume). The settings stay variables, which override its environment.
+	 */
+	// svelte-ignore state_referenced_locally
+	let compose = $state(template.compose);
+	let composeOpen = $state(false);
+	const composeEdited = $derived(compose !== template.compose);
+	const composeError = $derived(composeProblem(compose));
+
 	const reason = $derived.by(() => {
 		if (nameError) return l.translate('templates.reason.name');
+		if (composeError) return l.translate('templates.reason.compose');
 		const missing = blocking.filter((f) => !(values[f.key] ?? '').trim()).length;
 		if (missing) return l.translate('templates.reason.fill', [missing]);
 		if (blocking.length) return l.translate('templates.reason.fix');
@@ -213,6 +230,10 @@
 		}
 		if (blocking.length) {
 			document.getElementById(`template-${blocking[0].key}`)?.focus();
+			return;
+		}
+		if (composeError) {
+			composeOpen = true;
 			return;
 		}
 		submit().catch(() => {});
@@ -489,6 +510,54 @@
 				<span class="text-sm font-medium">{l.translate('templates.after')}</span>
 				<p class="text-sm text-muted-foreground">{l.translate(template.after)}</p>
 			</div>
+
+			<Collapsible.Root bind:open={composeOpen} class="flex flex-col gap-2.5">
+				<div class="flex items-center gap-2">
+					<Collapsible.Trigger
+						class="-ml-2 flex h-8 items-center gap-2 self-start rounded-md px-2 text-sm font-semibold text-primary outline-none hover:bg-hover focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-inset"
+					>
+						<Icon icon={FileCodeIcon} class="size-4" />
+						{l.translate('templates.compose.title')}
+						<Icon
+							icon={ArrowDown01Icon}
+							class={cn('size-4 transition-transform', composeOpen && 'rotate-180')}
+						/>
+					</Collapsible.Trigger>
+					{#if composeEdited}
+						<span class="text-xs font-medium text-warning">
+							{l.translate('templates.compose.edited')}
+						</span>
+					{/if}
+				</div>
+				<Collapsible.Content class="flex flex-col gap-2">
+					<p class="text-sm text-muted-foreground">
+						{l.translate('templates.compose.description')}
+					</p>
+					<CodeEditor
+						bind:value={compose}
+						lang="yaml"
+						rows={12}
+						spellcheck={false}
+						aria-label={l.translate('templates.compose.title')}
+						aria-invalid={(tried && !!composeError) || undefined}
+						aria-describedby="template-compose-message"
+					/>
+					<FieldMessage id="template-compose-message" error={tried ? composeError : undefined}>
+						{#snippet help()}
+							{#if composeEdited}
+								<button
+									type="button"
+									class="inline-flex items-center gap-1 font-medium text-primary hover:underline"
+									onclick={() => (compose = template.compose)}
+								>
+									<Icon icon={ArrowTurnBackwardIcon} class="size-3.5" />
+									{l.translate('templates.compose.reset')}
+								</button>
+							{/if}
+						{/snippet}
+					</FieldMessage>
+				</Collapsible.Content>
+			</Collapsible.Root>
 
 			<p class="text-xs text-muted-foreground">
 				{l.translate('templates.logo_credit', [template.logoCredit])} ·

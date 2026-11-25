@@ -21,7 +21,42 @@ export function generateSecret(
 
 /** A generated field's value: a new secret, after the field's prefix if it has one. */
 export function newSecret(field: TemplateField): string {
-	return (field.prefix ?? '') + generateSecret(field.length ?? 32);
+	const length = field.length ?? 32;
+	return (field.prefix ?? '') + (field.strong ? strongSecret(length) : generateSecret(length));
+}
+
+const LOWER = 'abcdefghijklmnopqrstuvwxyz';
+const UPPER = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+const DIGITS = '0123456789';
+// Unreserved in URLs, and plain in YAML and shells: the password survives every place it goes.
+const SYMBOLS = '-_.~';
+
+/**
+ * A random password with at least one lower case letter, upper case letter, digit and symbol,
+ * from the browser's crypto source. Rejection sampling keeps every choice unbiased.
+ */
+export function strongSecret(
+	length: number,
+	fill: (bytes: Uint8Array<ArrayBuffer>) => Uint8Array = (b) => crypto.getRandomValues(b)
+): string {
+	/** A random whole number below `n` (n <= 256). */
+	const below = (n: number): number => {
+		const limit = 256 - (256 % n);
+		for (;;) {
+			const [byte] = fill(new Uint8Array(1));
+			if (byte < limit) return byte % n;
+		}
+	};
+	const from = (alphabet: string) => alphabet[below(alphabet.length)];
+	const all = LOWER + UPPER + DIGITS + SYMBOLS;
+	const chars = [from(LOWER), from(UPPER), from(DIGITS), from(SYMBOLS)];
+	while (chars.length < length) chars.push(from(all));
+	// Fisher-Yates, so the four guaranteed classes are anywhere.
+	for (let i = chars.length - 1; i > 0; i--) {
+		const j = below(i + 1);
+		[chars[i], chars[j]] = [chars[j], chars[i]];
+	}
+	return chars.join('');
 }
 
 /** The secret a value carries, without its field's prefix: what people copy and connect with. */
@@ -150,6 +185,7 @@ export function connectionUrl(
  * cache only publishes "/tcp" ports: its URL would open nothing.
  */
 export function hasWebPage(template: Template): boolean {
+	if (template.noWebPage) return false;
 	return /^\s+- "\d+:\d+"$/m.test(template.compose);
 }
 
@@ -165,6 +201,7 @@ export function credentialValue(
 ): string {
 	return credential.value.replace(/\{([A-Za-z0-9_]+)\}/g, (_match, key: string) => {
 		if (key === 'url') return url ?? '';
+		if (key === 'ws') return url ? url.replace(/^http/, 'ws') : '';
 		const field = template.fields.find((f) => f.key === key);
 		return field ? secretOf(field, values[key]) : (values[key] ?? '');
 	});
