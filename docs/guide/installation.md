@@ -29,6 +29,8 @@ volumes:
   data:
 ```
 
+With the Docker socket mounted as above, **checkship** creates a local target if needed and pulls and starts its built-in VersityGW backup storage on first start. You do not need `EXPOSED_ON` to enable backup storage; that setting is only for exposing **checkship** through its proxy. If the Docker engine cannot be reached, checkship still starts and keeps backup archives in its data folder.
+
 ## With Docker
 
 Don't forget to sets the [appropriate environment variables](/guide/configuration) according to your needs.
@@ -107,7 +109,7 @@ If set, the `EXPOSED_ON` will be used to determine:
 - The name of the checkship container itself which must be attached to the local target,
 - The default local target URL if no one exists yet.
 
-If a local target already exists, the container will be attached to it without updating the target URL.
+If a local target already exists, the container will be attached to it without updating the target URL. The local target may already have been created for built-in backup storage; set `EXPOSED_ON` before first startup if you want it to receive the default URL automatically.
 :::
 
 ## Behind a reverse proxy {#reverse-proxy}

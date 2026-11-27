@@ -93,7 +93,7 @@ type (
 
 func (BackupStorageChanged) Name_() string { return "deployment.event.backup_storage_changed" }
 
-// Settings used until the owner changes them: copies stay in the data folder.
+// Safe temporary settings before first-run setup selects the built-in storage.
 func DefaultBackupStorage() BackupStorage {
 	return BackupStorage{
 		mode:      BackupStorageLocal,

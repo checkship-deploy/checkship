@@ -91,11 +91,11 @@ This is enough to undo mistakes, but if the server is lost its backups are lost 
 
 **checkship** runs an S3 server for you on one of your targets: [versitygw](https://github.com/versity/versitygw) (Versity S3 Gateway, Apache-2.0), with its POSIX backend. Every object it stores is a plain file in a folder, so archives stay readable even without the gateway.
 
-It is set up on its own the **first time checkship starts** on a server exposed through a local target (the `EXPOSED_ON` setting of the [installation](/guide/installation#exposing-checkship)). Without a local target, backups stay in the data folder until you pick a target on **Backups › Storage**.
+It is set up automatically the **first time checkship starts** when its Docker engine is available. If there is no local target yet, checkship creates one called **This machine** and runs the storage there. This does not depend on `EXPOSED_ON`; that setting is only needed if you also want checkship exposed through its proxy. If Docker is unavailable, checkship remains usable and backups stay in the data folder until storage can be configured.
 
 What **checkship** does on the chosen target:
 
-- deploys the compose project `checkship-internal-storage-<target id>` with the image `versity/versitygw:v1.11.0` (see [settings](#settings));
+- pulls and starts the separate VersityGW container in the compose project `checkship-internal-storage-<target id>` with the image `versity/versitygw:v1.11.0` by default (see [settings](#settings));
 - keeps its data in the volume `checkship-internal-storage-<target id>_data`, mounted at `/data`, with one folder per bucket: `checkship-backups/<application id>/<backup id>.tar.gz`;
 - generates an access key and a secret key, kept in **checkship**'s database and passed to the gateway as `ROOT_ACCESS_KEY` and `ROOT_SECRET_KEY`;
 - creates the bucket `checkship-backups`, then writes, reads and deletes a small test object before showing the storage as **Ready**.
@@ -104,9 +104,10 @@ To reach it, **checkship** tries these addresses in order and keeps the first th
 
 | Address                  | When it works                                                                                               |
 | ------------------------ | ----------------------------------------------------------------------------------------------------------- |
-| `checkship-storage:7070` | **checkship** runs in a container exposed on that target: both share the target's network                   |
+| `checkship-storage:7070` | **checkship** runs in a container on the same Docker engine; checkship joins the storage network           |
 | `s3.<target host>`       | The target has a URL: its proxy routes `s3.` of its domain to the storage, over HTTPS if the target uses it |
-| `127.0.0.1:7070`         | A local target, with **checkship** running directly on the host                                             |
+| `127.0.0.1:<port>`       | A local target, with **checkship** running directly on the Docker host; the port may move if occupied        |
+| `<target host>:<port>`   | A remote target without a URL; its Docker host publishes the gateway port for checkship to reach             |
 
 The storage page starts with four figures: where copies go, its state (**Starting**, **Ready** or **Failed** with the reason), when the last copy left the server, and how many good backups are still only on their target. Below, the settings show the address in use, the bucket and the access key. A failed setup can be started again by saving the page.
 

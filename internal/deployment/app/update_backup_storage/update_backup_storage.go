@@ -3,7 +3,10 @@ package update_backup_storage
 import (
 	"context"
 	"errors"
+	"time"
 
+	auth "github.com/checkship-deploy/checkship/internal/auth/domain"
+	"github.com/checkship-deploy/checkship/internal/deployment/app/configure_storage"
 	"github.com/checkship-deploy/checkship/internal/deployment/domain"
 	"github.com/checkship-deploy/checkship/pkg/apperr"
 	"github.com/checkship-deploy/checkship/pkg/bus"
@@ -195,22 +198,59 @@ func EnsureHandler(
 	reader domain.BackupStorageReader,
 	writer domain.BackupStorageWriter,
 	targets domain.TargetsReader,
+	targetWriter domain.TargetsWriter,
+	localProvider LocalProvider,
+	scheduler bus.Scheduler,
 ) bus.RequestHandler[bus.UnitType, EnsureCommand] {
 	return func(ctx context.Context, _ EnsureCommand) (bus.UnitType, error) {
 		settings, err := reader.Get(ctx)
 
-		if err != nil || settings.Saved() {
+		if err != nil {
 			return bus.Unit, err
+		}
+
+		if settings.Saved() {
+			if settings.Mode() != domain.BackupStorageBuiltin {
+				return bus.Unit, nil // An explicit local or external choice always wins
+			}
+
+			// Re-run setup at each start: besides recovering a failed gateway, this
+			// reconnects Checkship's container to the storage network after upgrades.
+			return bus.Unit, queueSetup(ctx, scheduler, settings.Version())
 		}
 
 		local, err := targets.GetLocalTarget(ctx)
 
 		if err != nil {
 			if errors.Is(err, apperr.ErrNotFound) {
-				return bus.Unit, nil
-			}
+				config, prepareErr := localProvider.PrepareLocal(ctx)
 
-			return bus.Unit, err
+				if prepareErr != nil {
+					return bus.Unit, prepareErr
+				}
+
+				requirement, prepareErr := targets.CheckConfigAvailability(ctx, config)
+
+				if prepareErr != nil {
+					return bus.Unit, prepareErr
+				}
+
+				local, prepareErr = domain.NewTarget(
+					"This machine",
+					requirement,
+					auth.CurrentUser(ctx).MustGet(),
+				)
+
+				if prepareErr != nil {
+					return bus.Unit, prepareErr
+				}
+
+				if prepareErr = targetWriter.Write(ctx, &local); prepareErr != nil {
+					return bus.Unit, prepareErr
+				}
+			} else {
+				return bus.Unit, err
+			}
 		}
 
 		accessKey, secretKey, err := Keys()
@@ -221,6 +261,24 @@ func EnsureHandler(
 
 		settings.UseBuiltin(local.ID(), accessKey, secretKey)
 
-		return bus.Unit, writer.Write(ctx, &settings)
+		if err = writer.Write(ctx, &settings); err != nil {
+			return bus.Unit, err
+		}
+
+		// The storage-changed signal also queues this job in the application bus;
+		// queue explicitly so setup remains guaranteed for other handler adapters.
+		return bus.Unit, queueSetup(ctx, scheduler, settings.Version())
 	}
+}
+
+func queueSetup(ctx context.Context, scheduler bus.Scheduler, version time.Time) error {
+	return scheduler.Queue(ctx, configure_storage.Command{
+		Version: version,
+	}, bus.WithGroup("deployment.backup_storage"), bus.WithPolicy(bus.JobPolicyMerge))
+}
+
+// The Docker provider exposes its local configuration without requiring a
+// remote host or credentials.
+type LocalProvider interface {
+	PrepareLocal(context.Context) (domain.ProviderConfig, error)
 }

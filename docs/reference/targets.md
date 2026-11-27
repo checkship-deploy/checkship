@@ -6,6 +6,8 @@ Targets represents an **host** where your deployments will be exposed. When conf
 For now, only one target per host is allowed.
 :::
 
+On first start, **checkship** creates a **This machine** target when one does not exist, so it can run the built-in backup storage on the local Docker engine. You can use that target for deployments too, and set its root URL when you want the proxy to expose application domains.
+
 ## Proxy configuration {#proxy}
 
 When declaring a target, you must choose how the proxy (needed to make your services available from the outside world) should be managed:

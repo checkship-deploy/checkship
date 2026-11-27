@@ -50,20 +50,18 @@ You land on the **Overview**. It stays empty until your first deployment and sho
 <img class="screenshot light-only" src="/screenshots/first-run-light.webp" alt="The empty Overview page listing three steps: add a target, create an application, deploy it" width="1440" height="900" />
 <img class="screenshot dark-only" src="/screenshots/first-run-dark.webp" alt="The empty Overview page listing three steps: add a target, create an application, deploy it" width="1440" height="900" />
 
-## Create your first target
+## Configure your local target
 
-First, add [a target](/reference/targets): the Docker engine that will run your applications.
+On first start, **checkship** creates a local target called **This machine** for its built-in backup storage. Reuse that target for the quickstart application and give it a root URL so **checkship** can expose application domains.
 
-Click **Start** on the Overview, or open the [Targets page](http://localhost:8080/targets) and click [New target](http://localhost:8080/targets/new). Then fill the form:
+Open the [Targets page](http://localhost:8080/targets), select **This machine**, and edit its exposure settings:
 
-- **Name**: `local`. It's only a label for lists and selects.
-- **Where it runs**: **This machine**, the Docker engine next to **checkship**.
-- **Exposure**: keep **Expose services automatically** on and set the **Root URL** to `http://docker.localhost`. Every application gets a subdomain of it, here `http://<app>.docker.localhost`. With an `https` URL, certificates are issued automatically.
+- Keep **Expose services automatically** on and set the **Root URL** to `http://docker.localhost`. Every application gets a subdomain of it, here `http://<app>.docker.localhost`. With an `https` URL, certificates are issued automatically.
 
 <img class="screenshot light-only" src="/screenshots/new-target-light.webp" alt="The New target form with the name local, This machine selected and the root URL http://docker.localhost" width="1440" height="900" />
 <img class="screenshot dark-only" src="/screenshots/new-target-dark.webp" alt="The New target form with the name local, This machine selected and the root URL http://docker.localhost" width="1440" height="900" />
 
-Click **Create target**. The target starts as **Configuring** while **checkship** [prepares it](/reference/targets#configuration) and deploys the proxy that routes your application URLs (Traefik). After a few seconds, it turns **Ready**.
+Save the target. **checkship** [prepares it](/reference/targets#configuration) and deploys or updates the proxy that routes your application URLs (Traefik). After a few seconds, it is **Ready**.
 
 ## Create your first application
 

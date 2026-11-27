@@ -129,7 +129,8 @@ func Server(options ServerOptions, logger log.Logger) (ServerRoot, error) {
 		}
 	}
 
-	// Install the built-in backup storage on the local target the first time, if there is one
+	// Install built-in backup storage on the local target, creating the target if needed.
+	// Saved built-in configurations are also requeued to restore their Docker network access.
 	if _, err := bus.Send(s.bus, domain.WithUserID(context.Background(), domain.UserID(uid)), update_backup_storage.EnsureCommand{}); err != nil {
 		s.logger.Warnw("could not set up the built-in backup storage, backups stay in the data folder", "error", err)
 	}

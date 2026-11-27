@@ -170,7 +170,7 @@ func Setup(
 	bus.Register(b, restore_volumes.Handler(restoresStore, restoresStore, backupsStore, appsStore, targetsStore, backupFiles, providerFacade, backupRunner, opts, logger))
 	bus.Register(b, update_backup_storage.Handler(backupStorageStore, backupStorageStore, targetsStore, storageChecker))
 	bus.Register(b, update_backup_storage.TestHandler(storageChecker))
-	bus.Register(b, update_backup_storage.EnsureHandler(backupStorageStore, backupStorageStore, targetsStore))
+	bus.Register(b, update_backup_storage.EnsureHandler(backupStorageStore, backupStorageStore, targetsStore, targetsStore, dock, scheduler))
 	bus.Register(b, configure_storage.Handler(backupStorageStore, backupStorageStore, targetsStore, providerFacade, storageChecker, backupstore.NewMover(), opts, logger))
 	bus.Register(b, get_backup_storage.Handler(backupStorageStore, opts))
 	bus.Register(b, get_app_volumes.Handler(appsStore, targetsStore, providerFacade))
